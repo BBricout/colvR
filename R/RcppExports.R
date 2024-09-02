@@ -21,6 +21,14 @@ nlopt_optimize_ZIP <- function(data, params, config) {
     .Call(`_colvR_nlopt_optimize_ZIP`, data, params, config)
 }
 
+nlopt_optimize_rank_miss <- function(data, params, config) {
+    .Call(`_colvR_nlopt_optimize_rank_miss`, data, params, config)
+}
+
+nlopt_optimize_rank_cov <- function(data, params, config) {
+    .Call(`_colvR_nlopt_optimize_rank_cov`, data, params, config)
+}
+
 Elbo_grad_logS_Rcpp <- function(data, params) {
     .Call(`_colvR_Elbo_grad_logS_Rcpp`, data, params)
 }

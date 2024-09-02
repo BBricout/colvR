@@ -70,6 +70,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// nlopt_optimize_rank_miss
+Rcpp::List nlopt_optimize_rank_miss(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config);
+RcppExport SEXP _colvR_nlopt_optimize_rank_miss(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_rank_miss(data, params, config));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nlopt_optimize_rank_cov
+Rcpp::List nlopt_optimize_rank_cov(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config);
+RcppExport SEXP _colvR_nlopt_optimize_rank_cov(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_rank_cov(data, params, config));
+    return rcpp_result_gen;
+END_RCPP
+}
 // Elbo_grad_logS_Rcpp
 Rcpp::List Elbo_grad_logS_Rcpp(const Rcpp::List& data, const Rcpp::List& params);
 RcppExport SEXP _colvR_Elbo_grad_logS_Rcpp(SEXP dataSEXP, SEXP paramsSEXP) {
@@ -136,6 +162,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_colvR_Elbo", (DL_FUNC) &_colvR_Elbo, 2},
     {"_colvR_Grad", (DL_FUNC) &_colvR_Grad, 2},
     {"_colvR_nlopt_optimize_ZIP", (DL_FUNC) &_colvR_nlopt_optimize_ZIP, 3},
+    {"_colvR_nlopt_optimize_rank_miss", (DL_FUNC) &_colvR_nlopt_optimize_rank_miss, 3},
+    {"_colvR_nlopt_optimize_rank_cov", (DL_FUNC) &_colvR_nlopt_optimize_rank_cov, 3},
     {"_colvR_Elbo_grad_logS_Rcpp", (DL_FUNC) &_colvR_Elbo_grad_logS_Rcpp, 2},
     {"_colvR_nlopt_optimize_ZIP_logS", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_logS, 3},
     {"_colvR_cpp_test_packing", (DL_FUNC) &_colvR_cpp_test_packing, 0},
