@@ -1,0 +1,22 @@
+n <- 300
+p <- 25
+d <- 3
+q <- 5
+
+X <- cbind(c(rep(1, n*p)),matrix(rnorm(n*p*d), nrow = n*p))
+B <- rnorm(d+1)
+
+W <- matrix(rnorm(n*q), nrow = n)
+C <- matrix(rnorm(p*q), nrow = p)/sqrt(q)
+
+XB <- VectorToMatrix(X%*%B, n, p)
+
+sum(diag(XB))
+sum(diag(W%*%t(C)))
+
+Z <- XB + W%*%t(C)    
+Lambda <- exp(Z)
+
+Y <- matrix(rpois(n*p, lambda = Lambda), nrow = n)
+
+Miss.ZIPLNPCA(Y, X, q)
