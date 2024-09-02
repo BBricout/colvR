@@ -4,7 +4,7 @@
 \alias{Miss.PLNPCA}
 \title{Miss.PLNPCA}
 \usage{
-Miss.PLNPCA(Y, X, O, w, q, params, config)
+Miss.PLNPCA(Y, X, O = NULL, w = NULL, q, params = NULL, config = NULL)
 }
 \arguments{
 \item{Y}{count matrix}
