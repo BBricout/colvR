@@ -1,0 +1,29 @@
+{
+    "args": [
+        "-std=gnu++17",
+        "-I/usr/share/R/include",
+        "-DNDEBUG",
+        "-fpic",
+        "-ffile-prefix-map=/build/r-base-avGvPq/r-base-4.4.1=.",
+        "-fstack-protector-strong",
+        "-D_FORTIFY_SOURCE=2",
+        "-I/home/bbricout/R/x86_64-pc-linux-gnu-library/4.4/Rcpp/include",
+        "-I/home/bbricout/R/x86_64-pc-linux-gnu-library/4.4/RcppArmadillo/include",
+        "-I/home/bbricout/R/x86_64-pc-linux-gnu-library/4.4/nloptr/include",
+        "-DEIGEN_DONT_VECTORIZE",
+        "-I/usr/lib/llvm-14/lib/clang/14.0.0/include",
+        "-I/usr/include/c++/11",
+        "-I/usr/include/x86_64-linux-gnu/c++/11",
+        "-I/usr/include/c++/11/backward",
+        "-I/usr/lib/gcc/x86_64-linux-gnu/11/include",
+        "-I/usr/local/include",
+        "-I/usr/include/x86_64-linux-gnu",
+        "-I/usr/include"
+    ],
+    "pch": "RcppArmadillo",
+    "is_cpp": true,
+    "hash": "172442458117243407071679672294",
+    "compiler": "3842177633958818519",
+    "rversion": "4.4.1",
+    "dbversion": 4
+}

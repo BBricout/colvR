@@ -1,0 +1,40 @@
+# Dimensions
+
+library(missForest)
+
+wd <- "~/Documents"
+fun.directory <- file.path(wd,"PLNPCA_missing_data/Fonctions/Fonction_PLNPCA_covariables.R")
+
+source(fun.directory)
+
+n <- 300
+p <- 25
+d <- 3
+q <- 5
+
+X <- cbind(c(rep(1, n*p)),matrix(rnorm(n*p*d), nrow = n*p))
+B <- rnorm(d+1)
+
+W <- matrix(rnorm(n*q), nrow = n)
+C <- matrix(rnorm(p*q), nrow = p)/sqrt(q)
+
+XB <- VectorToMatrix(X%*%B, n, p)
+
+sum(diag(XB))
+sum(diag(W%*%t(C)))
+
+Z <- XB + W%*%t(C)    
+Lambda <- exp(Z)
+
+Y <- matrix(rpois(n*p, lambda = Lambda), nrow = n)
+
+range(Y)
+mean(Y == 0)
+
+Y.na10 <- prodNA(Y, 0.1)
+Y.na30 <- add.NA.MCAR(Y.na10, 0.3)
+Y.na60 <- add.NA.MCAR(Y.na30, 0.6)
+
+
+Data <- list(Y = Y, Z = Z, C = C, B = B, X = X, W = W, Y.na10 = Y.na10, Y.na30 = Y.na30, Y.na60 = Y.na60)
+save(Data, file = file.path(wd, "PLNPCA_missing_data/Data_sim.Rdata"))
