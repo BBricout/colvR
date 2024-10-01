@@ -18,7 +18,7 @@ arma::mat ifelse_mat(const arma::mat& Y, const arma::mat& A, const arma::mat& nu
 
 arma::mat ifelse_exp(const arma::mat& nu);
 
-double entropie_logis(arma::mat & xi);
+double entropie_logis(const arma::mat & xi);
 
 arma::mat GradB(const arma::vec & vecY, const arma::mat & X, const arma::vec & vecR, const arma::vec & vecxi, const arma::vec & vecA);
 

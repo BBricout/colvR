@@ -194,9 +194,12 @@ Rcpp::List nlopt_optimize_ZIP(
         const arma::mat M = metadata.map<M_ID>(params);
         const arma::mat S = metadata.map<S_ID>(params);
         
+         
+        
         
     auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
     Elbo_grad(Y, X, R, B, D, C, M, S);
+    
     
     objective = -objective;
 
@@ -234,6 +237,11 @@ Rcpp::List nlopt_optimize_ZIP(
   	    
 
     return Rcpp::List::create(
+    	Rcpp::Named("elbo1", elbo1),
+    	Rcpp::Named("elbo2", elbo2),
+    	Rcpp::Named("elbo3", elbo3),
+    	Rcpp::Named("elbo4", elbo4),
+    	Rcpp::Named("elbo5", elbo5),
         Rcpp::Named("B", B),
         Rcpp::Named("D", D),
         Rcpp::Named("C", C),

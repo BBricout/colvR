@@ -40,7 +40,6 @@ Miss.ZIPLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des donn
                X = X)
 
   out <- nlopt_optimize_ZIP(data, params, config)
-
   mu <- VectorToMatrix(X%*%out$B, n, p)
   nu <- VectorToMatrix(X%*%out$D, n, p)
 
@@ -74,7 +73,12 @@ Miss.ZIPLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des donn
               elboPath = elboPath,
               elbo = elbo,
               params.init = params,
-              monitoring = out$monitoring)
+              monitoring = out$monitoring,
+              elbo1 = out$elbo1,
+              elbo2 = out$elbo2,
+              elbo3 = out$elbo3,
+              elbo4 = out$elbo4,
+              elbo5 = out$elbo5)
 
   return(res)
 

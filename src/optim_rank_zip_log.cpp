@@ -156,6 +156,11 @@ Rcpp::List nlopt_optimize_ZIP_logS(
   	    
 
     return Rcpp::List::create(
+    	Rcpp::Named("elbo1", elbo1),
+    	Rcpp::Named("elbo2", elbo2),
+    	Rcpp::Named("elbo3", elbo3),
+    	Rcpp::Named("elbo4", elbo4),
+    	Rcpp::Named("elbo5", elbo5),
         Rcpp::Named("B", B),
         Rcpp::Named("D", D),
         Rcpp::Named("C", C),
