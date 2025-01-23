@@ -205,5 +205,23 @@ double Elbo3(const arma::mat & R, const arma::mat & xi, const arma::mat & mu,
   return elbo3;
 }
 
+double Elbo3_q0(const arma::mat & R, const arma::mat & xi, const arma::mat & mu,
+             const arma::mat & Y,
+             const arma::mat & A, const arma::mat & log_fact_Y) {
+
+  // Calcul de l'ELBO
+  arma::mat elbo = R % xi % (Y % mu - A - log_fact_Y);
+
+  // Mettre à zéro les éléments de elbo là où R ou xi sont nuls
+  elbo.elem(arma::find(R == 0 || xi == 0)).zeros();
+
+  // Somme des éléments pour obtenir elbo3
+  double elbo3 = accu(elbo);
+
+  return elbo3;
+}
+
+
+
 
 

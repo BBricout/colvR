@@ -34,4 +34,8 @@ arma::mat GradS(const arma::mat & R, const arma::mat & xi, const arma::mat & A,
 double Elbo3(const arma::mat & R, const arma::mat & xi, const arma::mat & mu,
 		const arma::mat & Y, const arma::mat & M, const arma::mat & C,
 		const arma::mat & A, const arma::mat & log_fact_Y);
+		
+double Elbo3_q0(const arma::mat & R, const arma::mat & xi, const arma::mat & mu,
+	const arma::mat & Y,
+	const arma::mat & A, const arma::mat & log_fact_Y); 
 

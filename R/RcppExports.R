@@ -5,6 +5,26 @@ cpp_test_nlopt <- function() {
     .Call(`_colvR_cpp_test_nlopt`)
 }
 
+nlopt_optimize_ZIP_Beta <- function(data, params, config) {
+    .Call(`_colvR_nlopt_optimize_ZIP_Beta`, data, params, config)
+}
+
+nlopt_optimize_ZIP_C <- function(data, params, config) {
+    .Call(`_colvR_nlopt_optimize_ZIP_C`, data, params, config)
+}
+
+nlopt_optimize_ZIP_Gamma <- function(data, params, config) {
+    .Call(`_colvR_nlopt_optimize_ZIP_Gamma`, data, params, config)
+}
+
+nlopt_optimize_ZIP_M <- function(data, params, config) {
+    .Call(`_colvR_nlopt_optimize_ZIP_M`, data, params, config)
+}
+
+nlopt_optimize_ZIP_S <- function(data, params, config) {
+    .Call(`_colvR_nlopt_optimize_ZIP_S`, data, params, config)
+}
+
 Elbo_grad_Rcpp <- function(data, params) {
     .Call(`_colvR_Elbo_grad_Rcpp`, data, params)
 }
@@ -19,6 +39,10 @@ Grad <- function(data, params) {
 
 nlopt_optimize_ZIP <- function(data, params, config) {
     .Call(`_colvR_nlopt_optimize_ZIP`, data, params, config)
+}
+
+nlopt_optimize_ZIP_q0 <- function(data, params, config) {
+    .Call(`_colvR_nlopt_optimize_ZIP_q0`, data, params, config)
 }
 
 nlopt_optimize_rank_miss <- function(data, params, config) {

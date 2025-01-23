@@ -23,41 +23,64 @@ Miss.ZIPLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des donn
   n <- nrow(Y)
   p <- ncol(Y)
   d <- ncol(X)
-
-  if (is.null(params)){params <- Init_ZIP(Y, X, q)}
+  
   if (is.null(config)){config <- PLNPCA_param()$config_optim}
   if (is.null(tolS)){tolS <- 1e-04}
-
-  lBound <- c(rep(-Inf, (2*d)+(p*q)+(n*q)), rep(tolS, n*q))
-  config$lower_bounds <- lBound
-
+  
   R <- ifelse(is.na(Y), 0, 1) # Masque qui met des 0 à la place des données manquantes
-
+  
   Y.na <- ifelse(R == 0, 0, Y)
-
+  
   data <- list(Y = Y.na,
                R = R,
                X = X)
-
-  out <- nlopt_optimize_ZIP(data, params, config)
-  mu <- VectorToMatrix(X%*%out$B, n, p)
-  nu <- VectorToMatrix(X%*%out$D, n, p)
-
-
-
-  mStep <- list(gamma = out$D, beta = out$B, C = out$C)
-  eStep <- list(M = out$M, S = out$S,  xi = out$xi)
-
-  B.hat <- mStep$beta
-  D.hat <- mStep$gamma
-  C.hat <- mStep$C
-  M.hat <- eStep$M
-  S.hat <- eStep$S
-  XB.hat <- VectorToMatrix(X %*% B.hat, n, p)
-  XD.hat <- VectorToMatrix(X %*% D.hat, n, p)
-
-  predicted <- exp(XB.hat + M.hat %*% t(C.hat) + 0.5 * (S.hat*S.hat) %*% t(C.hat * C.hat))
-
+  
+  lBound <- c(rep(-Inf, (2*d)+(p*q)+(n*q)), rep(tolS, n*q))
+  config$lower_bounds <- lBound
+  
+  if(q == 0){
+    
+    if (is.null(params)){params <- Init_ZIP_q0(Y, X, q)}
+    
+    out <- nlopt_optimize_ZIP_q0(data, params, config)
+    mu <- VectorToMatrix(X%*%out$B, n, p)
+    nu <- VectorToMatrix(X%*%out$D, n, p)
+    
+    mStep <- list(gamma = out$D, beta = out$B)
+    eStep <- list(xi = out$xi)
+    
+    B.hat <- mStep$beta
+    D.hat <- mStep$gamma
+    XB.hat <- VectorToMatrix(X %*% B.hat, n, p)
+    XD.hat <- VectorToMatrix(X %*% D.hat, n, p)
+    
+    predicted <- exp(XB.hat)
+    elbo1 <- out$elbo1 ; elbo2 <- 0 ; elbo3 <- out$elbo3
+    elbo4 <- out$elbo4 ; elbo5 <- 0
+  }
+  
+  else{
+    if (is.null(params)){params <- Init_ZIP(Y, X, q)}
+    
+    out <- nlopt_optimize_ZIP(data, params, config)
+    mu <- VectorToMatrix(X%*%out$B, n, p)
+    nu <- VectorToMatrix(X%*%out$D, n, p)
+    
+    mStep <- list(gamma = out$D, beta = out$B, C = out$C)
+    eStep <- list(M = out$M, S = out$S,  xi = out$xi)
+    
+    B.hat <- mStep$beta
+    D.hat <- mStep$gamma
+    C.hat <- mStep$C
+    M.hat <- eStep$M
+    S.hat <- eStep$S
+    XB.hat <- VectorToMatrix(X %*% B.hat, n, p)
+    XD.hat <- VectorToMatrix(X %*% D.hat, n, p)
+    
+    predicted <- exp(XB.hat + M.hat %*% t(C.hat) + 0.5 * (S.hat*S.hat) %*% t(C.hat * C.hat))
+    elbo1 <- out$elbo1 ; elbo2 <- out$elbo2 ; elbo3 <- out$elbo3
+    elbo4 <- out$elbo4 ; elbo5 <- out$elbo5
+  }
 
   pred <- list(A = out$A, nu = nu, mu = mu, predicted = predicted)
   iter <- out$monitoring$iterations
@@ -74,11 +97,11 @@ Miss.ZIPLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des donn
               elbo = elbo,
               params.init = params,
               monitoring = out$monitoring,
-              elbo1 = out$elbo1,
-              elbo2 = out$elbo2,
-              elbo3 = out$elbo3,
-              elbo4 = out$elbo4,
-              elbo5 = out$elbo5)
+              elbo1 = elbo1,
+              elbo2 = elbo2,
+              elbo3 = elbo3,
+              elbo4 = elbo4,
+              elbo5 = elbo5)
 
   return(res)
 

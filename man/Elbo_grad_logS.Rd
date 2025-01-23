@@ -9,7 +9,7 @@ Elbo_grad_logS(data, params)
 \arguments{
 \item{data}{list(Y, R, X)}
 
-\item{params}{list(B, C, M, S)}
+\item{params}{list(B, D, C, M, S)}
 }
 \value{
 Elbo and gradients

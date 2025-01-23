@@ -61,7 +61,7 @@ Miss.PLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des donné
 
   A <- O + XB.hat + M.hat %*% t(C.hat) + 0.5 * (S.hat * S.hat) %*% t(C.hat* C.hat)
   A <- exp(A)
-  predicted <- exp(A)
+  predicted <- A
 
   pred <- list(A = A, predicted = predicted)
 

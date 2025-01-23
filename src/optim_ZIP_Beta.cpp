@@ -15,102 +15,6 @@
 #include "Elbo_gradBB.h"
 
 
-//--------------------------------------------------------------------------------------------------------------------
-
-
-// Sortie R de l'Elbo et des gradients
-
-
-// [[Rcpp::export]]
-Rcpp::List Elbo_grad_Rcpp(const Rcpp::List & data, // List(Y, R, X)
-                 const Rcpp::List & params // List(B, D, C, M, S)
-                ) {
-    const arma::mat & Y = Rcpp::as<arma::mat>(data["Y"]); // responses (n,p)
-    const arma::mat & R = Rcpp::as<arma::mat>(data["R"]); // missing data (n,p)
-    const arma::mat & X = Rcpp::as<arma::mat>(data["X"]); // covariates (np,d)
-    const arma::mat & B = Rcpp::as<arma::mat>(params["B"]); // (1,d) régresseurs pour la Poisson
-    const arma::mat & D = Rcpp::as<arma::mat>(params["D"]); // (1,d) régresseurs pour la logistique
-    const arma::mat & C = Rcpp::as<arma::mat>(params["C"]); // (p,q)
-    const arma::mat & M = Rcpp::as<arma::mat>(params["M"]); // (n,q)
-    const arma::mat & S = Rcpp::as<arma::mat>(params["S"]); // (n,q)
-
-
-
-
-    auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
-            Elbo_grad(Y, X, R, B, D, C, M, S);
-
-
-    return Rcpp::List::create(
-    	Rcpp::Named("xi", xi),
-        Rcpp::Named("elbo1", elbo1),
-        Rcpp::Named("elbo2", elbo2),
-        Rcpp::Named("elbo3", elbo3),
-        Rcpp::Named("elbo4", elbo4),
-        Rcpp::Named("elbo5", elbo5),
-        Rcpp::Named("objective", objective),
-        Rcpp::Named("gradB", gradB),
-        Rcpp::Named("gradD", gradD),
-        Rcpp::Named("gradC", gradC),
-        Rcpp::Named("gradM", gradM),
-        Rcpp::Named("gradS", gradS),
-        Rcpp::Named("A", A)
-    );
-}
-
-// [[Rcpp::export]]
-Rcpp::List Elbo(const Rcpp::List & data, // List(Y, R, X)
-                 const Rcpp::List & params // List(B, C, M, logS)
-                ) {
-    const arma::mat & Y = Rcpp::as<arma::mat>(data["Y"]); // responses (n,p)
-    const arma::mat & R = Rcpp::as<arma::mat>(data["R"]); // missing data (n,p)
-    const arma::mat & X = Rcpp::as<arma::mat>(data["X"]); // covariates (np,d)
-    const arma::mat & B = Rcpp::as<arma::mat>(params["B"]); // (1,d) régresseurs pour la Poisson
-    const arma::mat & D = Rcpp::as<arma::mat>(params["D"]); // (1,d) régresseurs pour la logistique
-    const arma::mat & C = Rcpp::as<arma::mat>(params["C"]); // (p,q)
-    const arma::mat & M = Rcpp::as<arma::mat>(params["M"]); // (n,q)
-    const arma::mat & S = Rcpp::as<arma::mat>(params["S"]); // (n,q)
-
-
-
-
-    auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
-            Elbo_grad(Y, X, R, B, D, C, M, S);
-
-
-    return Rcpp::List::create(Rcpp::Named("objective", objective));
-}
-
-
-// [[Rcpp::export]]
-Rcpp::List Grad(const Rcpp::List & data, // List(Y, R, X)
-                 const Rcpp::List & params // List(B, C, M, logS)
-                ) {
-    const arma::mat & Y = Rcpp::as<arma::mat>(data["Y"]); // responses (n,p)
-    const arma::mat & R = Rcpp::as<arma::mat>(data["R"]); // missing data (n,p)
-    const arma::mat & X = Rcpp::as<arma::mat>(data["X"]); // covariates (np,d)
-    const arma::mat & B = Rcpp::as<arma::mat>(params["B"]); // (1,d) régresseurs pour la Poisson
-    const arma::mat & D = Rcpp::as<arma::mat>(params["D"]); // (1,d) régresseurs pour la logistique
-    const arma::mat & C = Rcpp::as<arma::mat>(params["C"]); // (p,q)
-    const arma::mat & M = Rcpp::as<arma::mat>(params["M"]); // (n,q)
-    const arma::mat & S = Rcpp::as<arma::mat>(params["S"]); // (n,q)
-
-
-
-
-    auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
-            Elbo_grad(Y, X, R, B, D, C, M, S);
-
-
-    return Rcpp::List::create(
-        Rcpp::Named("gradB", gradB),
-        Rcpp::Named("gradD", gradD),
-        Rcpp::Named("gradC", gradC),
-        Rcpp::Named("gradM", gradM),
-        Rcpp::Named("gradS", gradS)
-    );
-}
-
 
 //--------------------------------------------------------------------------------------------------------------------
 // Optimisation
@@ -118,7 +22,7 @@ Rcpp::List Grad(const Rcpp::List & data, // List(Y, R, X)
 
 
 // [[Rcpp::export]]
-Rcpp::List nlopt_optimize_ZIP(
+Rcpp::List nlopt_optimize_ZIP_Beta(
     const Rcpp::List & data  , // List(Y, R, X)
     const Rcpp::List & params, // List(B, C, M, S)
     const Rcpp::List & config  // List of config values
@@ -194,6 +98,11 @@ Rcpp::List nlopt_optimize_ZIP(
         const arma::mat M = metadata.map<M_ID>(params);
         const arma::mat S = metadata.map<S_ID>(params);
         
+        int n = Y.n_rows;
+    	int p = Y.n_cols;
+    	int q = M.n_cols;
+    	int d = X.n_cols;
+        
          
         
         
@@ -212,12 +121,14 @@ Rcpp::List nlopt_optimize_ZIP(
         
         //std::cout << xi.min() << std::endl;
         //std::cout << A.max() << std::endl;
+        
 
         metadata.map<B_ID>(grad) = - gradB;
-        metadata.map<D_ID>(grad) = - gradD;
-	metadata.map<C_ID>(grad) = - gradC;
-        metadata.map<M_ID>(grad) = - gradM;
-        metadata.map<S_ID>(grad) =  - gradS;
+        metadata.map<D_ID>(grad) = arma::zeros(d,1);
+	metadata.map<C_ID>(grad) = arma::zeros(p,q);
+	metadata.map<M_ID>(grad) = arma::zeros(n,q);
+	metadata.map<S_ID>(grad) = arma::zeros(n,q);
+        
         
 
         return objective;
@@ -231,7 +142,8 @@ Rcpp::List nlopt_optimize_ZIP(
     arma::mat M = metadata.copy<M_ID>(parameters.data());
     arma::mat S = metadata.copy<S_ID>(parameters.data());
     
-      auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
+    
+        auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
     Elbo_grad(Y, X, R, B, D, C, M, S);
     
   	    
@@ -258,7 +170,3 @@ Rcpp::List nlopt_optimize_ZIP(
         ))
     );
 }
-
-
-
-

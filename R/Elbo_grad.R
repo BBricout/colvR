@@ -2,7 +2,7 @@
 #'
 #'
 #' @param data list(Y, R, X)
-#' @param params list(B, C, M, S)
+#' @param params list(B, D, C, M, S)
 #' @return Elbo and gradients
 #' @export
 Elbo_grad <- function(data, params) {
