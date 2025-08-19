@@ -4,7 +4,15 @@
 \alias{Miss.ZIPLNPCA.logS}
 \title{Miss.ZIPLNPCA.logS}
 \usage{
-Miss.ZIPLNPCA.logS(Y, X, q, params = NULL, config = NULL)
+Miss.ZIPLNPCA.logS(
+  Y,
+  X,
+  q,
+  params = NULL,
+  config = NULL,
+  tolxi = NULL,
+  tolLogS = NULL
+)
 }
 \arguments{
 \item{Y}{count matrix}

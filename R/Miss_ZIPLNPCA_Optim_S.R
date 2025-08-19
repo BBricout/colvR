@@ -1,4 +1,4 @@
-#' Miss.ZIPLNPCA
+#' Miss.ZIPLNPCA_Optim.S
 #'
 #' Estimation of the parameters and the missing data
 #' @param Y count matrix
@@ -6,22 +6,21 @@
 #' @param q size of the latent space
 #' @param params Initial parameters
 #' @param config configuration of the optimizer
-#' @param tolS list containing an upper and a lower bound for S 
-#' @param tolxi threshold for xi
+#' @param tolS S tolerance
 #' @return A list of the estimated parameters
 #' @import PLNmodels
 #' @export
 
 
 
-Miss.ZIPLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des données manquantes
-                        X, # Covariables np*d dont une colonne de 1 pour l'intercept
-                        q, # Dimension de l'espace latent q
-                        params = NULL, # Paramètres fourni en entrée
-                        config = NULL,
-                        tolS = NULL,
-                        tolxi = NULL){
-
+Miss.ZIPLNPCA_Optim.S <- function(Y, # Table de comptages n*p qui peut contenir des données manquantes
+                          X, # Covariables np*d dont une colonne de 1 pour l'intercept
+                          q, # Dimension de l'espace latent q
+                          params = NULL, # Paramètres fourni en entrée
+                          config = NULL,
+                          tolS = NULL,
+                          tolxi = NULL){
+  
   n <- nrow(Y)
   p <- ncol(Y)
   d <- ncol(X)
@@ -31,7 +30,7 @@ Miss.ZIPLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des donn
     config <- list(algorithm = "MMA", backend = "nlopt", maxeval = 10000,
                    ftol_abs = 1e-8, xtol_abs = 1e-4, maxtime = -1, trace = 1, ftol_rel = 1e-15, xtol_rel = 1e-15)
   }
-  if (is.null(tolS)){tolS <- list(lower = 0, upper = 1)}
+  if (is.null(tolS)){tolS <- list(lower = 1e-04, upper = 1)}
   if (is.null(tolxi)){tolxi <- 1e-04}
   
   R <- ifelse(is.na(Y), 0, 1) # Masque qui met des 0 à la place des données manquantes
@@ -46,32 +45,11 @@ Miss.ZIPLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des donn
   lBound <- c(rep(-Inf, (2*d)+(p*q)+(n*q)), rep(tolS$lower, n*q))
   config$lower_bounds <- lBound
   config$upper_bounds <- uBound
+
   
-  if(q == 0){
-    
-    if (is.null(params)){params <- Init_ZIP_q0(Y, X, q)}
-    
-    out <- nlopt_optimize_ZIP_q0(data, params, config, tolxi)
-    mu <- VectorToMatrix(X%*%out$B, n, p)
-    nu <- VectorToMatrix(X%*%out$D, n, p)
-    
-    mStep <- list(gamma = out$D, beta = out$B)
-    eStep <- list(xi = out$xi)
-    
-    B.hat <- mStep$beta
-    D.hat <- mStep$gamma
-    XB.hat <- VectorToMatrix(X %*% B.hat, n, p)
-    XD.hat <- VectorToMatrix(X %*% D.hat, n, p)
-    
-    predicted <- exp(XB.hat)
-    elbo1 <- out$elbo1 ; elbo2 <- 0 ; elbo3 <- out$elbo3
-    elbo4 <- out$elbo4 ; elbo5 <- 0
-  }
-  
-  else{
     if (is.null(params)){params <- Init_ZIP(Y, X, q)}
     
-    out <- nlopt_optimize_ZIP(data, params, config, tolxi)
+    out <- nlopt_optimize_S(data, params, config, tolxi)
     mu <- VectorToMatrix(X%*%out$B, n, p)
     nu <- VectorToMatrix(X%*%out$D, n, p)
     
@@ -89,36 +67,28 @@ Miss.ZIPLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des donn
     predicted <- exp(XB.hat + M.hat %*% t(C.hat) + 0.5 * (S.hat*S.hat) %*% t(C.hat * C.hat))
     elbo1 <- out$elbo1 ; elbo2 <- out$elbo2 ; elbo3 <- out$elbo3
     elbo4 <- out$elbo4 ; elbo5 <- out$elbo5
-  }
-  
-  params <- list(B = out$B, D = out$D, C = out$C, M = out$M, S = out$S)
-  
-  grad <- Elbo_grad(data, params, tolxi)
 
+  
   pred <- list(A = out$A, nu = nu, mu = mu, predicted = predicted)
   iter <- out$monitoring$iterations
   elboPath <- out$objective_values
   # elbo <- out$objective_values[length(out$objective_values)]
   elbo <- out$objective
-  imputed <- ifelse(is.na(Y), out$xi*out$A, Y)
-
 
   res <- list(mStep = mStep,
               eStep = eStep,
-              imputed = imputed,
               pred = pred,
               iter = iter,
               elboPath = elboPath,
               elbo = elbo,
               params.init = params,
               monitoring = out$monitoring,
-              gradB = grad$gradB,
-              gradD = grad$gradD,
-              gradC = grad$gradC,
-              gradM = grad$gradM, 
-              gradS = grad$gradS
-                )
-
+              elbo1 = elbo1,
+              elbo2 = elbo2,
+              elbo3 = elbo3,
+              elbo4 = elbo4,
+              elbo5 = elbo5)
+  
   return(res)
-
+  
 }

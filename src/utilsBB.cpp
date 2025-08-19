@@ -39,24 +39,56 @@ arma::mat log_factorial_matrix(const arma::mat& Y) {
 }
 
 // Définition de la fonction ifelse_mat
-arma::mat ifelse_mat(const arma::mat& Y, const arma::mat& A, const arma::mat& nu, const arma::mat& R) {
-  arma::mat xi = arma::ones(size(Y));
+// arma::mat ifelse_mat(const arma::mat& Y, const arma::mat& A, const arma::mat& nu, const arma::mat& R, double tolxi) {
+//     arma::mat xi = arma::ones(size(Y)); // Étape 1 : Initialisation à 1 partout
+// 
+//     // Étape 2 : Si R == 0, alors xi = nu
+//     arma::uvec mask_R0 = arma::find(R == 0.0);
+//     xi.elem(mask_R0) = nu.elem(mask_R0);
+// 
+//     // Étape 3 : Si Y == 0 et R == 1, alors xi = nu - A * R
+//     arma::uvec mask_Y0_R1 = arma::find((Y == 0) % (R == 1));
+//     xi.elem(mask_Y0_R1) = nu.elem(mask_Y0_R1) - A.elem(mask_Y0_R1) % R.elem(mask_Y0_R1);
+// 
+//     // Étape 4 : Appliquer la transformation logistique selon le signe de xi
+//     arma::uvec pos_mask = arma::find(xi >= 0);
+//     arma::uvec neg_mask = arma::find(xi < 0);
+// 
+//     xi.elem(pos_mask) = 1 / (1 + arma::exp(-xi.elem(pos_mask)));
+//     xi.elem(neg_mask) = arma::exp(xi.elem(neg_mask)) / (1 + arma::exp(xi.elem(neg_mask)));
+// 
+//     // Étape 5 : Appliquer la tolérance pour éviter exactement 0 et 1
+//     //xi = arma::clamp(xi, tolxi, 1.0 - tolxi);
+// 
+//     return xi;
+// }
 
+// Définition de la fonction ifelse_mat
+arma::mat ifelse_mat(const arma::mat& Y, const arma::mat& A, const arma::mat& nu, const arma::mat& R, double tolxi) {
+  arma::mat xi = arma::ones(size(Y));
+  
   // Masque pour Y == 0 et R == 1, ou R == 0
   arma::uvec mask = arma::find((Y == 0) % (R == 1) || (R == 0));
-
+  
   // Calculer xi pour les éléments du masque
   xi.elem(mask) = nu.elem(mask) - A.elem(mask) % R.elem(mask);
-
+  
+  // Masque pour R == 0
+  
+  arma::uvec mask_R0 = arma::find(R == 0);
+  xi.elem(mask_R0) = nu.elem(mask_R0);
+  
   // Appliquer la transformation logistique
   arma::uvec pos_mask = find(xi.elem(mask) >= 0);
   arma::uvec neg_mask = find(xi.elem(mask) < 0);
-
+  
   xi.elem(mask(pos_mask)) = 1 / (1 + exp(-xi.elem(mask(pos_mask))));
   xi.elem(mask(neg_mask)) = exp(xi.elem(mask(neg_mask))) / (exp(xi.elem(mask(neg_mask))) + 1);
-
+  
   // Les autres éléments restent à 1 (valeur d'initialisation)
-
+  
+  xi.elem(mask) = arma::clamp(xi.elem(mask), tolxi, 1.0 - tolxi);
+  
   return xi;
 }
 
@@ -79,7 +111,7 @@ arma::mat ifelse_exp(const arma::mat& nu) {
 // Définition de la fonction entropie_logis
 double entropie_logis(const arma::mat& xi) {
   // Créer un masque pour les valeurs valides (entre 0 et 1, exclusivement)
-  arma::mat mask = arma::conv_to<arma::mat>::from((xi > 0) % (xi < 1));
+  arma::mat mask = arma::conv_to<arma::mat>::from((xi > 0.0) % (xi < 1));
 
   // Appliquer le masque à xi
   arma::mat valid_xi = xi % mask;
@@ -102,7 +134,7 @@ arma::mat GradB(const arma::vec & vecY, const arma::mat & X, const arma::vec & v
   arma::vec gradi = vecR % vecxi % (vecY - vecA);
 
   // Créer un masque pour les indices où vecR et vecxi sont non nuls
-  arma::uvec mask = (vecR != 0) && (vecxi != 0);
+  arma::uvec mask = (vecR != 0.0) && (vecxi != 0.0);
 
   // Mettre à zéro les gradients là où le masque est faux
   gradi.elem(find(mask == 0)).zeros();
@@ -197,7 +229,7 @@ double Elbo3(const arma::mat & R, const arma::mat & xi, const arma::mat & mu,
   arma::mat elbo = R % xi % (Y % (mu + M * C.t()) - A - log_fact_Y);
 
   // Mettre à zéro les éléments de elbo là où R ou xi sont nuls
-  elbo.elem(arma::find(R == 0 || xi == 0)).zeros();
+  elbo.elem(arma::find(R == 0.0 || xi == 0.0)).zeros();
 
   // Somme des éléments pour obtenir elbo3
   double elbo3 = accu(elbo);
@@ -213,7 +245,7 @@ double Elbo3_q0(const arma::mat & R, const arma::mat & xi, const arma::mat & mu,
   arma::mat elbo = R % xi % (Y % mu - A - log_fact_Y);
 
   // Mettre à zéro les éléments de elbo là où R ou xi sont nuls
-  elbo.elem(arma::find(R == 0 || xi == 0)).zeros();
+  elbo.elem(arma::find(R == 0.0 || xi == 0.0)).zeros();
 
   // Somme des éléments pour obtenir elbo3
   double elbo3 = accu(elbo);

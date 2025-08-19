@@ -4,7 +4,7 @@
 \alias{Miss.ZIPLNPCA}
 \title{Miss.ZIPLNPCA}
 \usage{
-Miss.ZIPLNPCA(Y, X, q, params = NULL, config = NULL, tolS = NULL)
+Miss.ZIPLNPCA(Y, X, q, params = NULL, config = NULL, tolS = NULL, tolxi = NULL)
 }
 \arguments{
 \item{Y}{count matrix}
@@ -17,7 +17,9 @@ Miss.ZIPLNPCA(Y, X, q, params = NULL, config = NULL, tolS = NULL)
 
 \item{config}{configuration of the optimizer}
 
-\item{tolS}{S tolerance}
+\item{tolS}{list containing an upper and a lower bound for S}
+
+\item{tolxi}{threshold for xi}
 }
 \value{
 A list of the estimated parameters

@@ -24,7 +24,7 @@ inline std::tuple<
     arma::mat, arma::mat, arma::mat
 >
 Elbo_grad_q0(const arma::mat & Y, const arma::mat & X, const arma::mat & R,
-              const arma::mat & B, const arma::mat & D) {
+              const arma::mat & B, const arma::mat & D, double tolxi) {
               
 
     int n = Y.n_rows;
@@ -51,7 +51,7 @@ Elbo_grad_q0(const arma::mat & Y, const arma::mat & X, const arma::mat & R,
     arma::mat pi = 1./(1. + exp(-nu));
 
     arma::vec vecpi = vectorise(pi);
-    arma::mat xi = ifelse_mat(Y, A, nu, R);
+    arma::mat xi = ifelse_mat(Y, A, nu, R, tolxi);
 
     arma::vec vecxi = vectorise(xi);
     

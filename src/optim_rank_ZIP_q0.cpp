@@ -26,7 +26,8 @@
 Rcpp::List nlopt_optimize_ZIP_q0(
     const Rcpp::List & data  , // List(Y, R, X)
     const Rcpp::List & params, // List(B, D)
-    const Rcpp::List & config  // List of config values
+    const Rcpp::List & config,  // List of config values
+    double tolxi
 ) {
     // Conversion from R, prepare optimization
     const arma::mat & Y = Rcpp::as<arma::mat>(data["Y"]); // responses (n,p)
@@ -80,7 +81,7 @@ Rcpp::List nlopt_optimize_ZIP_q0(
     
 
     // Optimize
-    auto objective_and_grad = [&metadata, &X, &Y, &R, &objective_values](const double * params, double * grad) -> double {
+    auto objective_and_grad = [&metadata, &X, &Y, &R, &objective_values, &tolxi](const double * params, double * grad) -> double {
     
         const arma::mat B = metadata.map<B_ID>(params);
         const arma::mat D = metadata.map<D_ID>(params);
@@ -88,7 +89,7 @@ Rcpp::List nlopt_optimize_ZIP_q0(
         
         
     auto [xi, elbo1, elbo3, elbo4, objective, gradB, gradD, A] = 
-    Elbo_grad_q0(Y, X, R, B, D);
+    Elbo_grad_q0(Y, X, R, B, D, tolxi);
     
     
     objective = -objective;
@@ -117,7 +118,7 @@ Rcpp::List nlopt_optimize_ZIP_q0(
 
     
         auto [xi, elbo1, elbo3, elbo4, objective, gradB, gradD, A] = 
-    Elbo_grad_q0(Y, X, R, B, D);
+    Elbo_grad_q0(Y, X, R, B, D, tolxi);
 
     
     return Rcpp::List::create(

@@ -14,42 +14,38 @@
 #include "utilsBB.h"
 #include "Elbo_gradBB.h"
 
-
-
 //--------------------------------------------------------------------------------------------------------------------
 // Optimisation
 
-
+// On donne en entrée Mi et Si
 
 // [[Rcpp::export]]
-Rcpp::List nlopt_optimize_S(
+Rcpp::List nlopt_optimize_ZIP_VE_Mi(
     const Rcpp::List & data  , // List(Y, R, X)
-    const Rcpp::List & params, // List(B, C, M, S)
+    const Rcpp::List & params, // List(B, D, C, Mi, Si)
     const Rcpp::List & config,  // List of config values
-    double tolxi // Tolérance sur xi
+    double tolxi, // Tolérance sur xi
+    int i // Numéro de la ligne à optimiser
 ) {
     // Conversion from R, prepare optimization
     const arma::mat & Y = Rcpp::as<arma::mat>(data["Y"]); // responses (n,p)
     const arma::mat & R = Rcpp::as<arma::mat>(data["R"]); // missing data (n,p)
     const arma::mat & X = Rcpp::as<arma::mat>(data["X"]); // covariates (np,d)
-    const auto init_B = Rcpp::as<arma::mat>(params["B"]); // (1,d) régresseurs pour la Poisson
-    const auto init_D = Rcpp::as<arma::mat>(params["D"]); // (1,d) régresseurs pour la logistique
-    const auto init_C = Rcpp::as<arma::mat>(params["C"]); // (p,q)
-    const auto init_M = Rcpp::as<arma::mat>(params["M"]); // (n,q)
-    const auto init_S = Rcpp::as<arma::mat>(params["S"]); // (n,q)
+    const auto B = Rcpp::as<arma::mat>(params["B"]); // (1,d) régresseurs pour la Poisson
+    const auto D = Rcpp::as<arma::mat>(params["D"]); // (1,d) régresseurs pour la logistique
+    const auto C = Rcpp::as<arma::mat>(params["C"]); // (p,q)
+    arma::mat M = Rcpp::as<arma::mat>(params["M"]); // (n,q)
+    arma::mat S = Rcpp::as<arma::mat>(params["S"]); // (n,q)
     
+    arma::vec init_Mi = M.row(i).t(); 
+    arma::vec init_Si = S.row(i).t(); 
 
-    
-
-    const auto metadata = tuple_metadata(init_B, init_D, init_C, init_M, init_S);
-    enum { B_ID, D_ID, C_ID, M_ID, S_ID }; // Names for metadata indexes
+    const auto metadata = tuple_metadata(init_Mi, init_Si);
+    enum { Mi_ID, Si_ID }; // Names for metadata indexes
 
     auto parameters = std::vector<double>(metadata.packed_size);
-    metadata.map<B_ID>(parameters.data()) = init_B;
-    metadata.map<D_ID>(parameters.data()) = init_D;
-    metadata.map<C_ID>(parameters.data()) = init_C;
-    metadata.map<M_ID>(parameters.data()) = init_M;
-    metadata.map<S_ID>(parameters.data()) = init_S;
+    metadata.map<Mi_ID>(parameters.data()) = init_Mi;
+    metadata.map<Si_ID>(parameters.data()) = init_Si;
 
     auto optimizer = new_nlopt_optimizer(config, parameters.size());
     
@@ -91,69 +87,50 @@ Rcpp::List nlopt_optimize_S(
         } else {
             auto per_param_list = Rcpp::as<Rcpp::List>(value);
             auto packed = std::vector<double>(metadata.packed_size);
-            set_from_r_sexp(metadata.map<B_ID>(packed.data()), per_param_list["B"]);
-            set_from_r_sexp(metadata.map<D_ID>(packed.data()), per_param_list["D"]);
-            set_from_r_sexp(metadata.map<C_ID>(packed.data()), per_param_list["C"]);
-            set_from_r_sexp(metadata.map<M_ID>(packed.data()), per_param_list["M"]);
-            set_from_r_sexp(metadata.map<S_ID>(packed.data()), per_param_list["S"]);
+            set_from_r_sexp(metadata.map<Mi_ID>(packed.data()), per_param_list["Mi"]);
+            set_from_r_sexp(metadata.map<Si_ID>(packed.data()), per_param_list["Si"]);
             set_per_value_xtol_abs(optimizer.get(), packed);
         }
     }
     
     std::vector<double> objective_values;
     
+    
+    
         
     
 
     // Optimize
-    auto objective_and_grad = [&metadata, &X, &Y, &R, &objective_values, &tolxi](const double * params, double * grad) -> double {
+    auto objective_and_grad = [&metadata, &X, &Y, &R, &B, &D, &C, &M, &S, &objective_values, &tolxi, i](const double * params, double * grad) -> double {
+  
+        const arma::vec Mi = metadata.map<Mi_ID>(params);
+	const arma::vec Si = metadata.map<Si_ID>(params);
+        
+        
+	// Injecter dans M et S
+	arma::mat M_updated = M;
+	arma::mat S_updated = S;
+	M_updated.row(i) = Mi.t();
+	S_updated.row(i) = Si.t();
+	
+
+    auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradM, gradS, A] = 
+    Elbo_grad_i(Y, X, R, B, D, C, M_updated, S_updated, tolxi, i);
     
-        const arma::mat B = metadata.map<B_ID>(params);
-        const arma::mat D = metadata.map<D_ID>(params);
-        const arma::mat C = metadata.map<C_ID>(params);
-        const arma::mat M = metadata.map<M_ID>(params);
-        const arma::mat S = metadata.map<S_ID>(params);
-        
-         
-        
-        
-    auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
-    Elbo_grad(Y, X, R, B, D, C, M, S, tolxi);
-    
-    int n = Y.n_rows;
-    int p = Y.n_cols;
     int q = M.n_cols;
-    int d = X.n_cols;
-    
+   
     
     objective = -objective;
     
-    arma::vec XB = X * B;
-    arma::vec XD = X * D;
-
-    arma::mat mu = arma::reshape(XB, n, p);
-    arma::mat nu = arma::reshape(XD, n, p);
-
- 
-    
-    std::cout << "Norme gradB : " << accu(gradB % gradB) << std::endl;
-    std::cout << "Norme gradD : " << accu(gradD % gradD) << std::endl;
-    std::cout << "Norme gradC : " << accu(gradC % gradC) << std::endl;
-    std::cout << "Norme gradM : " << accu(gradM % gradM) << std::endl;
-    std::cout << "Norme gradS : " << accu(gradS % gradS) << std::endl;
     
 
         objective_values.push_back(- objective);
-        //std::cout << objective << std::endl;
-        
+       
         arma::vec vecout = {elbo1, elbo2, elbo3, elbo4, elbo5, objective};
-        
 
-        metadata.map<B_ID>(grad) = arma::zeros(d,1);
-        metadata.map<D_ID>(grad) = arma::zeros(d,1);
-	metadata.map<C_ID>(grad) = arma::zeros(p,q);
-	metadata.map<M_ID>(grad) = arma::zeros(n,q);
-	metadata.map<S_ID>(grad) = -gradS;
+        metadata.map<Mi_ID>(grad) = - gradM ;
+        metadata.map<Si_ID>(grad) = arma::zeros(q,1);
+
         
 
         return objective;
@@ -161,12 +138,17 @@ Rcpp::List nlopt_optimize_S(
     OptimizerResult result = minimize_objective_on_parameters(optimizer.get(), objective_and_grad, parameters);
 
     // Model and variational parameters
-    arma::mat B = metadata.copy<B_ID>(parameters.data());
-    arma::mat D = metadata.copy<D_ID>(parameters.data());
-    arma::mat C = metadata.copy<C_ID>(parameters.data());
-    arma::mat M = metadata.copy<M_ID>(parameters.data());
-    arma::mat S = metadata.copy<S_ID>(parameters.data());
     
+
+    arma::vec Mi = metadata.copy<Mi_ID>(parameters.data());
+    arma::vec Si = metadata.copy<Si_ID>(parameters.data());
+    
+       arma::rowvec Mi_row = Mi.t();  // Transposition explicite
+	M.row(i) = Mi_row;
+
+	arma::rowvec Si_row = Si.t();
+	S.row(i) = Si_row;
+      
       auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
     Elbo_grad(Y, X, R, B, D, C, M, S, tolxi);
     
@@ -181,8 +163,8 @@ Rcpp::List nlopt_optimize_S(
         Rcpp::Named("B", B),
         Rcpp::Named("D", D),
         Rcpp::Named("C", C),
-        Rcpp::Named("M", M),
-        Rcpp::Named("S", S),
+        Rcpp::Named("Mi", Mi),
+        Rcpp::Named("Si", Si),
         Rcpp::Named("A", A),
         Rcpp::Named("xi", xi),
         Rcpp::Named("objective", objective),

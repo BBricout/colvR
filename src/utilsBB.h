@@ -14,7 +14,7 @@ double log_factorial(double n);
 
 arma::mat log_factorial_matrix(const arma::mat& Y);
 
-arma::mat ifelse_mat(const arma::mat& Y, const arma::mat& A, const arma::mat& nu, const arma::mat& R);
+arma::mat ifelse_mat(const arma::mat& Y, const arma::mat& A, const arma::mat& nu, const arma::mat& R, double tolxi);
 
 arma::mat ifelse_exp(const arma::mat& nu);
 

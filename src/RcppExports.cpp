@@ -21,130 +21,213 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// nlopt_optimize_ZIP_Beta
-Rcpp::List nlopt_optimize_ZIP_Beta(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config);
-RcppExport SEXP _colvR_nlopt_optimize_ZIP_Beta(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP) {
+// nlopt_optimize_S
+Rcpp::List nlopt_optimize_S(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config, double tolxi);
+RcppExport SEXP _colvR_nlopt_optimize_S(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP, SEXP tolxiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
-    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_Beta(data, params, config));
-    return rcpp_result_gen;
-END_RCPP
-}
-// nlopt_optimize_ZIP_C
-Rcpp::List nlopt_optimize_ZIP_C(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config);
-RcppExport SEXP _colvR_nlopt_optimize_ZIP_C(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
-    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_C(data, params, config));
-    return rcpp_result_gen;
-END_RCPP
-}
-// nlopt_optimize_ZIP_Gamma
-Rcpp::List nlopt_optimize_ZIP_Gamma(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config);
-RcppExport SEXP _colvR_nlopt_optimize_ZIP_Gamma(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
-    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_Gamma(data, params, config));
-    return rcpp_result_gen;
-END_RCPP
-}
-// nlopt_optimize_ZIP_M
-Rcpp::List nlopt_optimize_ZIP_M(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config);
-RcppExport SEXP _colvR_nlopt_optimize_ZIP_M(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
-    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_M(data, params, config));
-    return rcpp_result_gen;
-END_RCPP
-}
-// nlopt_optimize_ZIP_S
-Rcpp::List nlopt_optimize_ZIP_S(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config);
-RcppExport SEXP _colvR_nlopt_optimize_ZIP_S(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
-    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_S(data, params, config));
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_S(data, params, config, tolxi));
     return rcpp_result_gen;
 END_RCPP
 }
 // Elbo_grad_Rcpp
-Rcpp::List Elbo_grad_Rcpp(const Rcpp::List& data, const Rcpp::List& params);
-RcppExport SEXP _colvR_Elbo_grad_Rcpp(SEXP dataSEXP, SEXP paramsSEXP) {
+Rcpp::List Elbo_grad_Rcpp(const Rcpp::List& data, const Rcpp::List& params, double tolxi);
+RcppExport SEXP _colvR_Elbo_grad_Rcpp(SEXP dataSEXP, SEXP paramsSEXP, SEXP tolxiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
-    rcpp_result_gen = Rcpp::wrap(Elbo_grad_Rcpp(data, params));
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    rcpp_result_gen = Rcpp::wrap(Elbo_grad_Rcpp(data, params, tolxi));
     return rcpp_result_gen;
 END_RCPP
 }
 // Elbo
-Rcpp::List Elbo(const Rcpp::List& data, const Rcpp::List& params);
-RcppExport SEXP _colvR_Elbo(SEXP dataSEXP, SEXP paramsSEXP) {
+Rcpp::List Elbo(const Rcpp::List& data, const Rcpp::List& params, double tolxi);
+RcppExport SEXP _colvR_Elbo(SEXP dataSEXP, SEXP paramsSEXP, SEXP tolxiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
-    rcpp_result_gen = Rcpp::wrap(Elbo(data, params));
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    rcpp_result_gen = Rcpp::wrap(Elbo(data, params, tolxi));
     return rcpp_result_gen;
 END_RCPP
 }
 // Grad
-Rcpp::List Grad(const Rcpp::List& data, const Rcpp::List& params);
-RcppExport SEXP _colvR_Grad(SEXP dataSEXP, SEXP paramsSEXP) {
+Rcpp::List Grad(const Rcpp::List& data, const Rcpp::List& params, double tolxi);
+RcppExport SEXP _colvR_Grad(SEXP dataSEXP, SEXP paramsSEXP, SEXP tolxiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
-    rcpp_result_gen = Rcpp::wrap(Grad(data, params));
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    rcpp_result_gen = Rcpp::wrap(Grad(data, params, tolxi));
     return rcpp_result_gen;
 END_RCPP
 }
 // nlopt_optimize_ZIP
-Rcpp::List nlopt_optimize_ZIP(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config);
-RcppExport SEXP _colvR_nlopt_optimize_ZIP(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP) {
+Rcpp::List nlopt_optimize_ZIP(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config, double tolxi);
+RcppExport SEXP _colvR_nlopt_optimize_ZIP(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP, SEXP tolxiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
-    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP(data, params, config));
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP(data, params, config, tolxi));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nlopt_optimize_ZIP_M
+Rcpp::List nlopt_optimize_ZIP_M(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config, double tolxi);
+RcppExport SEXP _colvR_nlopt_optimize_ZIP_M(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP, SEXP tolxiSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_M(data, params, config, tolxi));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nlopt_optimize_ZIP_M_BetaGamma
+Rcpp::List nlopt_optimize_ZIP_M_BetaGamma(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config, double tolxi);
+RcppExport SEXP _colvR_nlopt_optimize_ZIP_M_BetaGamma(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP, SEXP tolxiSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_M_BetaGamma(data, params, config, tolxi));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nlopt_optimize_ZIP_M_C
+Rcpp::List nlopt_optimize_ZIP_M_C(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config, double tolxi);
+RcppExport SEXP _colvR_nlopt_optimize_ZIP_M_C(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP, SEXP tolxiSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_M_C(data, params, config, tolxi));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nlopt_optimize_ZIP_VE
+Rcpp::List nlopt_optimize_ZIP_VE(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config, double tolxi);
+RcppExport SEXP _colvR_nlopt_optimize_ZIP_VE(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP, SEXP tolxiSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_VE(data, params, config, tolxi));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nlopt_optimize_ZIP_VE_M
+Rcpp::List nlopt_optimize_ZIP_VE_M(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config, double tolxi);
+RcppExport SEXP _colvR_nlopt_optimize_ZIP_VE_M(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP, SEXP tolxiSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_VE_M(data, params, config, tolxi));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nlopt_optimize_ZIP_VE_Mi
+Rcpp::List nlopt_optimize_ZIP_VE_Mi(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config, double tolxi, int i);
+RcppExport SEXP _colvR_nlopt_optimize_ZIP_VE_Mi(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP, SEXP tolxiSEXP, SEXP iSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    Rcpp::traits::input_parameter< int >::type i(iSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_VE_Mi(data, params, config, tolxi, i));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nlopt_optimize_ZIP_VE_S
+Rcpp::List nlopt_optimize_ZIP_VE_S(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config, double tolxi);
+RcppExport SEXP _colvR_nlopt_optimize_ZIP_VE_S(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP, SEXP tolxiSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_VE_S(data, params, config, tolxi));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nlopt_optimize_ZIP_Steps
+Rcpp::List nlopt_optimize_ZIP_Steps(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config, double tolxi, Rcpp::List active_block_list);
+RcppExport SEXP _colvR_nlopt_optimize_ZIP_Steps(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP, SEXP tolxiSEXP, SEXP active_block_listSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type active_block_list(active_block_listSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_Steps(data, params, config, tolxi, active_block_list));
     return rcpp_result_gen;
 END_RCPP
 }
 // nlopt_optimize_ZIP_q0
-Rcpp::List nlopt_optimize_ZIP_q0(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config);
-RcppExport SEXP _colvR_nlopt_optimize_ZIP_q0(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP) {
+Rcpp::List nlopt_optimize_ZIP_q0(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config, double tolxi);
+RcppExport SEXP _colvR_nlopt_optimize_ZIP_q0(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP, SEXP tolxiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
-    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_q0(data, params, config));
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_q0(data, params, config, tolxi));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nlopt_optimize_ZIP_VE_Si
+Rcpp::List nlopt_optimize_ZIP_VE_Si(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config, double tolxi, int i);
+RcppExport SEXP _colvR_nlopt_optimize_ZIP_VE_Si(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP, SEXP tolxiSEXP, SEXP iSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    Rcpp::traits::input_parameter< int >::type i(iSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_VE_Si(data, params, config, tolxi, i));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -175,27 +258,29 @@ BEGIN_RCPP
 END_RCPP
 }
 // Elbo_grad_logS_Rcpp
-Rcpp::List Elbo_grad_logS_Rcpp(const Rcpp::List& data, const Rcpp::List& params);
-RcppExport SEXP _colvR_Elbo_grad_logS_Rcpp(SEXP dataSEXP, SEXP paramsSEXP) {
+Rcpp::List Elbo_grad_logS_Rcpp(const Rcpp::List& data, const Rcpp::List& params, double tolxi);
+RcppExport SEXP _colvR_Elbo_grad_logS_Rcpp(SEXP dataSEXP, SEXP paramsSEXP, SEXP tolxiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
-    rcpp_result_gen = Rcpp::wrap(Elbo_grad_logS_Rcpp(data, params));
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    rcpp_result_gen = Rcpp::wrap(Elbo_grad_logS_Rcpp(data, params, tolxi));
     return rcpp_result_gen;
 END_RCPP
 }
 // nlopt_optimize_ZIP_logS
-Rcpp::List nlopt_optimize_ZIP_logS(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config);
-RcppExport SEXP _colvR_nlopt_optimize_ZIP_logS(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP) {
+Rcpp::List nlopt_optimize_ZIP_logS(const Rcpp::List& data, const Rcpp::List& params, const Rcpp::List& config, double tolxi);
+RcppExport SEXP _colvR_nlopt_optimize_ZIP_logS(SEXP dataSEXP, SEXP paramsSEXP, SEXP configSEXP, SEXP tolxiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type params(paramsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type config(configSEXP);
-    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_logS(data, params, config));
+    Rcpp::traits::input_parameter< double >::type tolxi(tolxiSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlopt_optimize_ZIP_logS(data, params, config, tolxi));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -236,20 +321,25 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_colvR_cpp_test_nlopt", (DL_FUNC) &_colvR_cpp_test_nlopt, 0},
-    {"_colvR_nlopt_optimize_ZIP_Beta", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_Beta, 3},
-    {"_colvR_nlopt_optimize_ZIP_C", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_C, 3},
-    {"_colvR_nlopt_optimize_ZIP_Gamma", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_Gamma, 3},
-    {"_colvR_nlopt_optimize_ZIP_M", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_M, 3},
-    {"_colvR_nlopt_optimize_ZIP_S", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_S, 3},
-    {"_colvR_Elbo_grad_Rcpp", (DL_FUNC) &_colvR_Elbo_grad_Rcpp, 2},
-    {"_colvR_Elbo", (DL_FUNC) &_colvR_Elbo, 2},
-    {"_colvR_Grad", (DL_FUNC) &_colvR_Grad, 2},
-    {"_colvR_nlopt_optimize_ZIP", (DL_FUNC) &_colvR_nlopt_optimize_ZIP, 3},
-    {"_colvR_nlopt_optimize_ZIP_q0", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_q0, 3},
+    {"_colvR_nlopt_optimize_S", (DL_FUNC) &_colvR_nlopt_optimize_S, 4},
+    {"_colvR_Elbo_grad_Rcpp", (DL_FUNC) &_colvR_Elbo_grad_Rcpp, 3},
+    {"_colvR_Elbo", (DL_FUNC) &_colvR_Elbo, 3},
+    {"_colvR_Grad", (DL_FUNC) &_colvR_Grad, 3},
+    {"_colvR_nlopt_optimize_ZIP", (DL_FUNC) &_colvR_nlopt_optimize_ZIP, 4},
+    {"_colvR_nlopt_optimize_ZIP_M", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_M, 4},
+    {"_colvR_nlopt_optimize_ZIP_M_BetaGamma", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_M_BetaGamma, 4},
+    {"_colvR_nlopt_optimize_ZIP_M_C", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_M_C, 4},
+    {"_colvR_nlopt_optimize_ZIP_VE", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_VE, 4},
+    {"_colvR_nlopt_optimize_ZIP_VE_M", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_VE_M, 4},
+    {"_colvR_nlopt_optimize_ZIP_VE_Mi", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_VE_Mi, 5},
+    {"_colvR_nlopt_optimize_ZIP_VE_S", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_VE_S, 4},
+    {"_colvR_nlopt_optimize_ZIP_Steps", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_Steps, 5},
+    {"_colvR_nlopt_optimize_ZIP_q0", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_q0, 4},
+    {"_colvR_nlopt_optimize_ZIP_VE_Si", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_VE_Si, 5},
     {"_colvR_nlopt_optimize_rank_miss", (DL_FUNC) &_colvR_nlopt_optimize_rank_miss, 3},
     {"_colvR_nlopt_optimize_rank_cov", (DL_FUNC) &_colvR_nlopt_optimize_rank_cov, 3},
-    {"_colvR_Elbo_grad_logS_Rcpp", (DL_FUNC) &_colvR_Elbo_grad_logS_Rcpp, 2},
-    {"_colvR_nlopt_optimize_ZIP_logS", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_logS, 3},
+    {"_colvR_Elbo_grad_logS_Rcpp", (DL_FUNC) &_colvR_Elbo_grad_logS_Rcpp, 3},
+    {"_colvR_nlopt_optimize_ZIP_logS", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_logS, 4},
     {"_colvR_cpp_test_packing", (DL_FUNC) &_colvR_cpp_test_packing, 0},
     {"_colvR_MatrixToVector", (DL_FUNC) &_colvR_MatrixToVector, 1},
     {"_colvR_VectorToMatrix", (DL_FUNC) &_colvR_VectorToMatrix, 3},

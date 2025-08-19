@@ -23,7 +23,8 @@
 
 // [[Rcpp::export]]
 Rcpp::List Elbo_grad_logS_Rcpp(const Rcpp::List & data, // List(Y, R, X)
-                 const Rcpp::List & params // List(B, C, M, logS)
+                 const Rcpp::List & params, // List(B, C, M, logS)
+                 double tolxi
                 ) {
     const arma::mat & Y = Rcpp::as<arma::mat>(data["Y"]); // responses (n,p)
     const arma::mat & R = Rcpp::as<arma::mat>(data["R"]); // missing data (n,p)
@@ -38,7 +39,7 @@ Rcpp::List Elbo_grad_logS_Rcpp(const Rcpp::List & data, // List(Y, R, X)
 
 
     auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
-            Elbo_grad_LogS(Y, X, R, B, D, C, M, logS);
+            Elbo_grad_LogS(Y, X, R, B, D, C, M, logS, tolxi);
 
 
     return Rcpp::List::create(
@@ -65,7 +66,8 @@ Rcpp::List Elbo_grad_logS_Rcpp(const Rcpp::List & data, // List(Y, R, X)
 Rcpp::List nlopt_optimize_ZIP_logS(
     const Rcpp::List & data  , // List(Y, R, X)
     const Rcpp::List & params, // List(B, C, M, S)
-    const Rcpp::List & config // List of config values
+    const Rcpp::List & config ,// List of config values
+    double tolxi
 ) {
     // Conversion from R, prepare optimization
     const arma::mat & Y = Rcpp::as<arma::mat>(data["Y"]); // responses (n,p)
@@ -91,6 +93,22 @@ Rcpp::List nlopt_optimize_ZIP_logS(
     metadata.map<logS_ID>(parameters.data()) = init_logS;
 
     auto optimizer = new_nlopt_optimizer(config, parameters.size());
+    
+         // Définition des bornes supérieures pour tous les paramètres
+	if (config.containsElementNamed("upper_bounds")) {
+	    auto upper_bounds_r = Rcpp::as<std::vector<double>>(config["upper_bounds"]);
+	    if (upper_bounds_r.size() != metadata.packed_size) {
+		Rcpp::stop("La taille du vecteur upper_bounds ne correspond pas à la taille totale des paramètres.");
+	    }
+	    std::vector<double> upper_bounds = upper_bounds_r;
+
+	    // Application des bornes à l'optimiseur
+	    nlopt_set_upper_bounds(optimizer.get(), upper_bounds.data());
+	} else {
+	    std::vector<double> upper_bounds(metadata.packed_size, HUGE_VAL);
+	    nlopt_set_upper_bounds(optimizer.get(), upper_bounds.data());
+	}
+	    
 
 
     if(config.containsElementNamed("xtol_abs")) {
@@ -114,7 +132,7 @@ Rcpp::List nlopt_optimize_ZIP_logS(
 
 
  // Optimize
-    auto objective_and_grad = [&metadata, &X, &Y, &R, &objective_values](const double * params, double * grad) -> double {
+    auto objective_and_grad = [&metadata, &X, &Y, &R, &objective_values, &tolxi](const double * params, double * grad) -> double {
         const arma::mat B = metadata.map<B_ID>(params);
         const arma::mat D = metadata.map<D_ID>(params);
         const arma::mat C = metadata.map<C_ID>(params);
@@ -123,9 +141,14 @@ Rcpp::List nlopt_optimize_ZIP_logS(
         
         
     auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
-    Elbo_grad_LogS(Y, X, R, B, D, C, M, logS);
+    Elbo_grad_LogS(Y, X, R, B, D, C, M, logS, tolxi);
     
     objective = -objective;
+    //std::cout << objective << std::endl;
+    //arma::uvec rows = {68, 71, 149, 253};
+    //std::cout << "logS : " << logS << std::endl ;
+    
+
 
         objective_values.push_back(- objective);
         
@@ -151,7 +174,7 @@ Rcpp::List nlopt_optimize_ZIP_logS(
     arma::mat logS = metadata.copy<logS_ID>(parameters.data());
     
         auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
-    Elbo_grad_LogS(Y, X, R, B, D, C, M, logS);
+    Elbo_grad_LogS(Y, X, R, B, D, C, M, logS, tolxi);
     
   	    
 

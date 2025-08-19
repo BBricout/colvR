@@ -4,7 +4,7 @@
 \alias{Elbo_grad}
 \title{Calculate the Elbo and the gradients}
 \usage{
-Elbo_grad(data, params)
+Elbo_grad(data, params, tolxi)
 }
 \arguments{
 \item{data}{list(Y, R, X)}

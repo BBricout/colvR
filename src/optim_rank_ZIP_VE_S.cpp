@@ -14,15 +14,13 @@
 #include "utilsBB.h"
 #include "Elbo_gradBB.h"
 
-
-
 //--------------------------------------------------------------------------------------------------------------------
 // Optimisation
 
 
 
 // [[Rcpp::export]]
-Rcpp::List nlopt_optimize_S(
+Rcpp::List nlopt_optimize_ZIP_VE_S(
     const Rcpp::List & data  , // List(Y, R, X)
     const Rcpp::List & params, // List(B, C, M, S)
     const Rcpp::List & config,  // List of config values
@@ -134,26 +132,23 @@ Rcpp::List nlopt_optimize_S(
     arma::mat mu = arma::reshape(XB, n, p);
     arma::mat nu = arma::reshape(XD, n, p);
 
- 
-    
-    std::cout << "Norme gradB : " << accu(gradB % gradB) << std::endl;
-    std::cout << "Norme gradD : " << accu(gradD % gradD) << std::endl;
-    std::cout << "Norme gradC : " << accu(gradC % gradC) << std::endl;
-    std::cout << "Norme gradM : " << accu(gradM % gradM) << std::endl;
-    std::cout << "Norme gradS : " << accu(gradS % gradS) << std::endl;
-    
 
         objective_values.push_back(- objective);
         //std::cout << objective << std::endl;
         
         arma::vec vecout = {elbo1, elbo2, elbo3, elbo4, elbo5, objective};
         
+        //std::cout << vecout << std::endl;
+        
+        //std::cout << xi.min() << std::endl;
+        //std::cout << A.max() << std::endl;
 
         metadata.map<B_ID>(grad) = arma::zeros(d,1);
         metadata.map<D_ID>(grad) = arma::zeros(d,1);
-	metadata.map<C_ID>(grad) = arma::zeros(p,q);
-	metadata.map<M_ID>(grad) = arma::zeros(n,q);
-	metadata.map<S_ID>(grad) = -gradS;
+	metadata.map<C_ID>(grad) = arma::zeros<arma::mat>(p, q);
+        metadata.map<M_ID>(grad) = arma::zeros<arma::mat>(n, q);
+        metadata.map<S_ID>(grad) = - gradS;
+
         
 
         return objective;

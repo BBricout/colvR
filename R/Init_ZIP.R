@@ -18,30 +18,26 @@
 
 Init_ZIP <- function(Y, X, q){
 
-  n <- nrow(Y)
-  p <- ncol(Y)
+  n <- nrow(Y) ; p <- ncol(Y)
   vecY <- MatrixToVector(Y)
-
   
-
   fit <- lm(log(1 + vecY) ~ -1 + X, na.action = na.exclude)
   B <- as.matrix(fit$coefficients)
-  res.mat <- VectorToMatrix(fit$residuals, n, p)
-  
-  # mu = VectorToMatrix(X%*%B,n,p)
-  # ProbCompt0 = exp(-exp(mu + res.mat))
+  res.vec <- ifelse(is.na(vecY), 0, fit$residuals)
+  res.mat <- VectorToMatrix(res.vec, n, p)
   
   U <- ifelse(Y == 0, 0, 1)
   vecU <- MatrixToVector(U)
   fit.logit <- glm(vecU ~ -1 + X, family = "binomial", na.action = na.exclude)
   D <- as.matrix(fit.logit$coefficients)
   
-
   svdM <- svd(res.mat, nu = q, nv = p)
-
+  
   C <- svdM$v[, 1:q, drop = FALSE] %*% diag(svdM$d[1:q], nrow = q, ncol = q)/sqrt(n)
   M  <- svdM$u[, 1:q, drop = FALSE] %*% diag(svdM$d[1:q], nrow = q, ncol = q) %*% t(svdM$v[1:q, 1:q, drop = FALSE])
-  S <- matrix(1, n, q)
+  Sigma <- C%*%t(C) + summary(fit)$sigma**2 * diag(p)
+  diag(q) - t(C)%*% solve(Sigma) %*% C
+  S <- rep(1,n) %o% diag(diag(q) - t(C)%*% solve(Sigma) %*% C)
 
   return(list(B = B, D = D, C = C, M = M, S = S))
 }

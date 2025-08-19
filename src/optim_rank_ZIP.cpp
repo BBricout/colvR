@@ -23,7 +23,8 @@
 
 // [[Rcpp::export]]
 Rcpp::List Elbo_grad_Rcpp(const Rcpp::List & data, // List(Y, R, X)
-                 const Rcpp::List & params // List(B, D, C, M, S)
+                 const Rcpp::List & params, // List(B, D, C, M, S)
+                 double tolxi
                 ) {
     const arma::mat & Y = Rcpp::as<arma::mat>(data["Y"]); // responses (n,p)
     const arma::mat & R = Rcpp::as<arma::mat>(data["R"]); // missing data (n,p)
@@ -38,7 +39,7 @@ Rcpp::List Elbo_grad_Rcpp(const Rcpp::List & data, // List(Y, R, X)
 
 
     auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
-            Elbo_grad(Y, X, R, B, D, C, M, S);
+            Elbo_grad(Y, X, R, B, D, C, M, S, tolxi);
 
 
     return Rcpp::List::create(
@@ -60,7 +61,8 @@ Rcpp::List Elbo_grad_Rcpp(const Rcpp::List & data, // List(Y, R, X)
 
 // [[Rcpp::export]]
 Rcpp::List Elbo(const Rcpp::List & data, // List(Y, R, X)
-                 const Rcpp::List & params // List(B, C, M, logS)
+                 const Rcpp::List & params, // List(B, C, M, logS)
+                 double tolxi
                 ) {
     const arma::mat & Y = Rcpp::as<arma::mat>(data["Y"]); // responses (n,p)
     const arma::mat & R = Rcpp::as<arma::mat>(data["R"]); // missing data (n,p)
@@ -75,7 +77,7 @@ Rcpp::List Elbo(const Rcpp::List & data, // List(Y, R, X)
 
 
     auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
-            Elbo_grad(Y, X, R, B, D, C, M, S);
+            Elbo_grad(Y, X, R, B, D, C, M, S, tolxi);
 
 
     return Rcpp::List::create(Rcpp::Named("objective", objective));
@@ -84,7 +86,8 @@ Rcpp::List Elbo(const Rcpp::List & data, // List(Y, R, X)
 
 // [[Rcpp::export]]
 Rcpp::List Grad(const Rcpp::List & data, // List(Y, R, X)
-                 const Rcpp::List & params // List(B, C, M, logS)
+                 const Rcpp::List & params, // List(B, C, M, logS)
+                 double tolxi
                 ) {
     const arma::mat & Y = Rcpp::as<arma::mat>(data["Y"]); // responses (n,p)
     const arma::mat & R = Rcpp::as<arma::mat>(data["R"]); // missing data (n,p)
@@ -99,7 +102,7 @@ Rcpp::List Grad(const Rcpp::List & data, // List(Y, R, X)
 
 
     auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
-            Elbo_grad(Y, X, R, B, D, C, M, S);
+            Elbo_grad(Y, X, R, B, D, C, M, S, tolxi);
 
 
     return Rcpp::List::create(
@@ -121,7 +124,8 @@ Rcpp::List Grad(const Rcpp::List & data, // List(Y, R, X)
 Rcpp::List nlopt_optimize_ZIP(
     const Rcpp::List & data  , // List(Y, R, X)
     const Rcpp::List & params, // List(B, C, M, S)
-    const Rcpp::List & config  // List of config values
+    const Rcpp::List & config,  // List of config values
+    double tolxi // Tolérance sur xi
 ) {
     // Conversion from R, prepare optimization
     const arma::mat & Y = Rcpp::as<arma::mat>(data["Y"]); // responses (n,p)
@@ -163,6 +167,21 @@ Rcpp::List nlopt_optimize_ZIP(
         nlopt_set_lower_bounds(optimizer.get(), lower_bounds.data());
     }
     
+	     // Définition des bornes supérieures pour tous les paramètres
+	if (config.containsElementNamed("upper_bounds")) {
+	    auto upper_bounds_r = Rcpp::as<std::vector<double>>(config["upper_bounds"]);
+	    if (upper_bounds_r.size() != metadata.packed_size) {
+		Rcpp::stop("La taille du vecteur upper_bounds ne correspond pas à la taille totale des paramètres.");
+	    }
+	    std::vector<double> upper_bounds = upper_bounds_r;
+
+	    // Application des bornes à l'optimiseur
+	    nlopt_set_upper_bounds(optimizer.get(), upper_bounds.data());
+	} else {
+	    std::vector<double> upper_bounds(metadata.packed_size, HUGE_VAL);
+	    nlopt_set_upper_bounds(optimizer.get(), upper_bounds.data());
+	}
+	    
  
     if(config.containsElementNamed("xtol_abs")) {
         SEXP value = config["xtol_abs"];
@@ -186,7 +205,7 @@ Rcpp::List nlopt_optimize_ZIP(
     
 
     // Optimize
-    auto objective_and_grad = [&metadata, &X, &Y, &R, &objective_values](const double * params, double * grad) -> double {
+    auto objective_and_grad = [&metadata, &X, &Y, &R, &objective_values, &tolxi](const double * params, double * grad) -> double {
     
         const arma::mat B = metadata.map<B_ID>(params);
         const arma::mat D = metadata.map<D_ID>(params);
@@ -198,10 +217,39 @@ Rcpp::List nlopt_optimize_ZIP(
         
         
     auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
-    Elbo_grad(Y, X, R, B, D, C, M, S);
+    Elbo_grad(Y, X, R, B, D, C, M, S, tolxi);
+    
+    int n = Y.n_rows;
+    int p = Y.n_cols;
+    int q = M.n_cols;
+    int d = X.n_cols;
     
     
     objective = -objective;
+    
+    arma::vec XB = X * B;
+    arma::vec XD = X * D;
+
+    arma::mat mu = arma::reshape(XB, n, p);
+    arma::mat nu = arma::reshape(XD, n, p);
+
+    
+    //std::cout << "elbo1" << elbo1 << std::endl;
+    //std::cout << "elbo2" << elbo2 << std::endl;
+    //std::cout << "elbo3" << elbo3 << std::endl;
+    //std::cout << "elbo4" << elbo4 << std::endl;
+    //std::cout << "elbo5" << elbo5 << std::endl;
+    //std::cout << "min S :" << S.min() << std::endl;
+    //std::cout << "max S :" << S.max() << std::endl;
+    //std::cout << "xi" << xi << std::endl;
+    //std::cout << "gradM" << gradM << std::endl;
+    
+    //std::cout << "Norme gradB : " << accu(gradB % gradB) << std::endl;
+    //std::cout << "Norme gradD : " << accu(gradD % gradD) << std::endl;
+    //std::cout << "Norme gradC : " << accu(gradC % gradC) << std::endl;
+    //std::cout << "Norme gradM : " << accu(gradM % gradM) << std::endl;
+    //std::cout << "Norme gradS : " << accu(gradS % gradS) << std::endl;
+    
 
         objective_values.push_back(- objective);
         //std::cout << objective << std::endl;
@@ -217,7 +265,8 @@ Rcpp::List nlopt_optimize_ZIP(
         metadata.map<D_ID>(grad) = - gradD;
 	metadata.map<C_ID>(grad) = - gradC;
         metadata.map<M_ID>(grad) = - gradM;
-        metadata.map<S_ID>(grad) =  - gradS;
+        metadata.map<S_ID>(grad) = - gradS;
+
         
 
         return objective;
@@ -232,7 +281,7 @@ Rcpp::List nlopt_optimize_ZIP(
     arma::mat S = metadata.copy<S_ID>(parameters.data());
     
       auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
-    Elbo_grad(Y, X, R, B, D, C, M, S);
+    Elbo_grad(Y, X, R, B, D, C, M, S, tolxi);
     
   	    
 

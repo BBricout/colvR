@@ -16,13 +16,21 @@ Miss.ZIPLNPCA.logS <- function(Y, # Table de comptages n*p qui peut contenir des
                              X, # Covariables np*d dont une colonne de 1 pour l'intercept
                              q, # Dimension de l'espace latent q
                              params = NULL, # Paramètres fourni en entrée
-                             config = NULL){
+                             config = NULL,
+                             tolxi = NULL, 
+                             tolLogS = NULL){
 
   n <- nrow(Y)
   p <- ncol(Y)
+  d <- ncol(X)
 
   if (is.null(params)){params <- Init_ZIP(Y, X, q)}
   if (is.null(config)){config <- PLNPCA_param()$config_optim}
+  if (is.null(tolxi)){tolxi <- 1e-04}
+  if (is.null(tolLogS)){tolLogS <- Inf}
+  
+  uBound <- c(rep(Inf, (2*d)+(p*q)+(n*q)), rep(tolLogS, n*q))
+  config$upper_bounds <- uBound
 
   R <- ifelse(is.na(Y), 0, 1) # Masque qui met des 0 à la place des données manquantes
 
@@ -34,7 +42,7 @@ Miss.ZIPLNPCA.logS <- function(Y, # Table de comptages n*p qui peut contenir des
 
   params$logS <- log(params$S)
 
-  out <- nlopt_optimize_ZIP_logS(data, params, config)
+  out <- nlopt_optimize_ZIP_logS(data, params, config, tolxi)
 
   mu <- VectorToMatrix(X%*%out$B, n, p)
   nu <- VectorToMatrix(X%*%out$D, n, p)
@@ -58,21 +66,25 @@ Miss.ZIPLNPCA.logS <- function(Y, # Table de comptages n*p qui peut contenir des
   elboPath <- out$objective_values
   # elbo <- out$objective_values[length(out$objective_values)]
   elbo <- out$objective
-
+  
+  imputed <- ifelse(is.na(Y), out$xi*out$A, Y)
+  grad <- Elbo_grad(data, params, tolxi)
 
   res <- list(mStep = mStep,
               eStep = eStep,
               pred = pred,
+              imputed = imputed,
               iter = iter,
               elboPath = elboPath,
               elbo = elbo,
               params.init = params,
               monitoring = out$monitoring,
-              elbo1 = out$elbo1,
-              elbo2 = out$elbo2,
-              elbo3 = out$elbo3,
-              elbo4 = out$elbo4,
-              elbo5 = out$elbo5)
+              gradB = grad$gradB,
+              gradD = grad$gradD,
+              gradC = grad$gradC,
+              gradM = grad$gradM, 
+              gradS = grad$gradS
+                )
 
   return(res)
 

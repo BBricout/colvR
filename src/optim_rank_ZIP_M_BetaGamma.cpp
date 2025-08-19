@@ -16,16 +16,14 @@
 
 
 
-//--------------------------------------------------------------------------------------------------------------------
-// Optimisation
-
 
 
 // [[Rcpp::export]]
-Rcpp::List nlopt_optimize_ZIP_C(
+Rcpp::List nlopt_optimize_ZIP_M_BetaGamma(
     const Rcpp::List & data  , // List(Y, R, X)
     const Rcpp::List & params, // List(B, C, M, S)
-    const Rcpp::List & config  // List of config values
+    const Rcpp::List & config,  // List of config values
+    double tolxi // Tolérance sur xi
 ) {
     // Conversion from R, prepare optimization
     const arma::mat & Y = Rcpp::as<arma::mat>(data["Y"]); // responses (n,p)
@@ -67,6 +65,21 @@ Rcpp::List nlopt_optimize_ZIP_C(
         nlopt_set_lower_bounds(optimizer.get(), lower_bounds.data());
     }
     
+	     // Définition des bornes supérieures pour tous les paramètres
+	if (config.containsElementNamed("upper_bounds")) {
+	    auto upper_bounds_r = Rcpp::as<std::vector<double>>(config["upper_bounds"]);
+	    if (upper_bounds_r.size() != metadata.packed_size) {
+		Rcpp::stop("La taille du vecteur upper_bounds ne correspond pas à la taille totale des paramètres.");
+	    }
+	    std::vector<double> upper_bounds = upper_bounds_r;
+
+	    // Application des bornes à l'optimiseur
+	    nlopt_set_upper_bounds(optimizer.get(), upper_bounds.data());
+	} else {
+	    std::vector<double> upper_bounds(metadata.packed_size, HUGE_VAL);
+	    nlopt_set_upper_bounds(optimizer.get(), upper_bounds.data());
+	}
+	    
  
     if(config.containsElementNamed("xtol_abs")) {
         SEXP value = config["xtol_abs"];
@@ -90,7 +103,7 @@ Rcpp::List nlopt_optimize_ZIP_C(
     
 
     // Optimize
-    auto objective_and_grad = [&metadata, &X, &Y, &R, &objective_values](const double * params, double * grad) -> double {
+    auto objective_and_grad = [&metadata, &X, &Y, &R, &objective_values, &tolxi](const double * params, double * grad) -> double {
     
         const arma::mat B = metadata.map<B_ID>(params);
         const arma::mat D = metadata.map<D_ID>(params);
@@ -98,19 +111,28 @@ Rcpp::List nlopt_optimize_ZIP_C(
         const arma::mat M = metadata.map<M_ID>(params);
         const arma::mat S = metadata.map<S_ID>(params);
         
-        int n = Y.n_rows;
-    	int p = Y.n_cols;
-    	int q = M.n_cols;
-    	int d = X.n_cols;
-        
          
         
         
     auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
-    Elbo_grad(Y, X, R, B, D, C, M, S);
+    Elbo_grad(Y, X, R, B, D, C, M, S, tolxi);
+    
+    int n = Y.n_rows;
+    int p = Y.n_cols;
+    int q = M.n_cols;
+    int d = X.n_cols;
     
     
     objective = -objective;
+    
+    arma::vec XB = X * B;
+    arma::vec XD = X * D;
+
+    arma::mat mu = arma::reshape(XB, n, p);
+    arma::mat nu = arma::reshape(XD, n, p);
+
+    
+    
 
         objective_values.push_back(- objective);
         //std::cout << objective << std::endl;
@@ -121,16 +143,12 @@ Rcpp::List nlopt_optimize_ZIP_C(
         
         //std::cout << xi.min() << std::endl;
         //std::cout << A.max() << std::endl;
-        
 
-
-        metadata.map<B_ID>(grad) = arma::zeros(d,1);
-        metadata.map<D_ID>(grad) = arma::zeros(d,1);
-	metadata.map<C_ID>(grad) = - gradC;
-	metadata.map<M_ID>(grad) = arma::zeros(n,q);
-	metadata.map<S_ID>(grad) = arma::zeros(n,q);
-        
-
+        metadata.map<B_ID>(grad) = - gradB;
+        metadata.map<D_ID>(grad) = - gradD;
+	metadata.map<C_ID>(grad) = arma::zeros<arma::mat>(p, q);
+        metadata.map<M_ID>(grad) = arma::zeros<arma::mat>(n, q);
+        metadata.map<S_ID>(grad) = arma::zeros<arma::mat>(n, q);
         
 
         return objective;
@@ -144,10 +162,8 @@ Rcpp::List nlopt_optimize_ZIP_C(
     arma::mat M = metadata.copy<M_ID>(parameters.data());
     arma::mat S = metadata.copy<S_ID>(parameters.data());
     
-
-    
-        auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
-    Elbo_grad(Y, X, R, B, D, C, M, S);
+      auto [xi, elbo1, elbo2, elbo3, elbo4, elbo5, objective, gradB, gradD, gradC, gradM, gradS, A] = 
+    Elbo_grad(Y, X, R, B, D, C, M, S, tolxi);
     
   	    
 
