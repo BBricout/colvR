@@ -5,10 +5,6 @@ cpp_test_nlopt <- function() {
     .Call(`_colvR_cpp_test_nlopt`)
 }
 
-nlopt_optimize_S <- function(data, params, config, tolxi) {
-    .Call(`_colvR_nlopt_optimize_S`, data, params, config, tolxi)
-}
-
 Elbo_grad_Rcpp <- function(data, params, tolxi) {
     .Call(`_colvR_Elbo_grad_Rcpp`, data, params, tolxi)
 }
@@ -29,28 +25,8 @@ nlopt_optimize_ZIP_M <- function(data, params, config, tolxi) {
     .Call(`_colvR_nlopt_optimize_ZIP_M`, data, params, config, tolxi)
 }
 
-nlopt_optimize_ZIP_M_BetaGamma <- function(data, params, config, tolxi) {
-    .Call(`_colvR_nlopt_optimize_ZIP_M_BetaGamma`, data, params, config, tolxi)
-}
-
-nlopt_optimize_ZIP_M_C <- function(data, params, config, tolxi) {
-    .Call(`_colvR_nlopt_optimize_ZIP_M_C`, data, params, config, tolxi)
-}
-
 nlopt_optimize_ZIP_VE <- function(data, params, config, tolxi) {
     .Call(`_colvR_nlopt_optimize_ZIP_VE`, data, params, config, tolxi)
-}
-
-nlopt_optimize_ZIP_VE_M <- function(data, params, config, tolxi) {
-    .Call(`_colvR_nlopt_optimize_ZIP_VE_M`, data, params, config, tolxi)
-}
-
-nlopt_optimize_ZIP_VE_Mi <- function(data, params, config, tolxi, i) {
-    .Call(`_colvR_nlopt_optimize_ZIP_VE_Mi`, data, params, config, tolxi, i)
-}
-
-nlopt_optimize_ZIP_VE_S <- function(data, params, config, tolxi) {
-    .Call(`_colvR_nlopt_optimize_ZIP_VE_S`, data, params, config, tolxi)
 }
 
 nlopt_optimize_ZIP_Steps <- function(data, params, config, tolxi, active_block_list) {
@@ -59,10 +35,6 @@ nlopt_optimize_ZIP_Steps <- function(data, params, config, tolxi, active_block_l
 
 nlopt_optimize_ZIP_q0 <- function(data, params, config, tolxi) {
     .Call(`_colvR_nlopt_optimize_ZIP_q0`, data, params, config, tolxi)
-}
-
-nlopt_optimize_ZIP_VE_Si <- function(data, params, config, tolxi, i) {
-    .Call(`_colvR_nlopt_optimize_ZIP_VE_Si`, data, params, config, tolxi, i)
 }
 
 nlopt_optimize_rank_miss <- function(data, params, config) {
