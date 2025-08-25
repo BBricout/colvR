@@ -2,26 +2,50 @@
 % Please edit documentation in R/Init.R
 \name{Init}
 \alias{Init}
-\title{Init}
+\title{Initialize parameters for a PLN-PCA with missing data}
 \usage{
 Init(Y, X, q)
 }
 \arguments{
-\item{Y}{count matrix}
+\item{Y}{Numeric \code{n x p} count matrix (may contain \code{NA}).}
 
-\item{X}{covariates}
+\item{X}{Numeric design matrix of covariates. Either \code{n x d}
+(rowwise design) or \code{(n*p) x d} (vectorized design matching
+\code{MatrixToVector(Y)}).}
 
-\item{q}{size of the latent space}
+\item{q}{Integer, target latent dimension (rank) for the factor structure.}
 }
 \value{
 A list with elements:
-  \describe{
-    \item{B}{Matrix of Poisson regression coefficients (d x p).}
-    \item{C}{Matrix of latent structure estimates (p x q).}
-    \item{M}{Matrix of variational parameters (n x p).}
-    \item{S}{Matrix of variance parameters (n x q).}
-  }
+\describe{
+  \item{\code{B}}{Matrix of regression coefficients (dimensions follow the
+  chosen design; typically (\code{1 x d}) in the rowwise case).}
+  \item{\code{C}}{Loadings matrix (\code{p x q}) for the latent factors.}
+  \item{\code{M}}{Variational means of the latent factors (\code{n x q}).}
+  \item{\code{S}}{Variational standard deviations (initialized to a small
+  constant; \code{n x q}).}
+}
 }
 \description{
-Parameters initialisation
+Provides a quick, SVD‑based initialization of model and variational
+parameters from a (possibly sparse) count matrix \code{Y} and a design
+matrix \code{X}. The routine fits a (log‑transformed) linear model to
+obtain regression coefficients and uses the SVD of residuals to
+initialize the latent structure (loadings and variational means).
+}
+\details{
+Missing values in \code{Y} are handled via \code{na.exclude} in the linear
+model; residuals at missing entries are then set to zero before the SVD.
+}
+\examples{
+set.seed(1)
+n <- 30; p <- 8; d <- 2; q <- 2
+Y <- matrix(rpois(n * p, 2), n, p)
+X <- cbind(1, rnorm(n))          # rowwise design
+init <- Init(Y, X, q)
+str(init)
+
+}
+\seealso{
+\code{\link{MatrixToVector}}, \code{\link{VectorToMatrix}}
 }

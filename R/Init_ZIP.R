@@ -1,18 +1,39 @@
-#' Init_ZIP
+#' Initialize parameters for the ZIP case (zero-inflated)
 #'
-#' Parameters initialisation in the zero inflated case
-#' @param Y count matrix
-#' @param X covariates
-#' @param q size of the latent space
+#' SVD-based initialization of parameters for a zero-inflated Poisson
+#' log-normal latent factor model (ZIP-PLN). Regression coefficients for
+#' the abundance part (\code{B}) are obtained by regressing \code{log(1+vec(Y))}
+#' on \code{X}; zero-inflation coefficients (\code{D}) come from a logistic
+#' regression of \code{I(Y>0)} on \code{X}. The latent structure is initialized
+#' from the SVD of the residual matrix.
+#'
+#' @param Y Numeric \code{n x p} count matrix (may contain \code{NA}).
+#' @param X Numeric design matrix with \code{n*p} rows and \code{d} columns,
+#'   aligned with \code{vec(Y)} (column-wise vectorization).
+#' @param q Integer, target latent dimension (rank).
+#'
 #' @return A list with elements:
-#'   \describe{
-#'     \item{B}{Matrix of Poisson regression coefficients (d x p).}
-#'     \item{D}{Matrix of logistic regression coefficients (d x p).}
-#'     \item{C}{Matrix of latent structure estimates (p x q).}
-#'     \item{M}{Matrix of variational parameters (n x p).}
-#'     \item{S}{Matrix of variance parameters (n x q).}
-#'   }
+#' \describe{
+#'   \item{\code{B}}{Abundance (Poisson) regression coefficients (\code{1 x d}).}
+#'   \item{\code{D}}{Zero-inflation (logit) regression coefficients (\code{1 x d}).}
+#'   \item{\code{C}}{Loadings matrix (\code{p x q}).}
+#'   \item{\code{M}}{Variational means of latent factors (\code{n x q}).}
+#'   \item{\code{S}}{Variational scale parameters.}
+#' }
+#'
+#'
+#' @examples
+#' set.seed(1)
+#' n <- 30; p <- 10; d <- 3; q <- 2
+#' Y <- matrix(rpois(n*p, 2), n, p)
+#' X <- cbind(1, rnorm(n*p), rnorm(n*p))  # (n*p) x d, vectorized design
+#' init <- Init_ZIP(Y, X, q)
+#' str(init)
+#'
+#' @seealso \code{\link{Init}} for the non-ZI initializer;
+#'   \code{\link{MatrixToVector}}, \code{\link{VectorToMatrix}}
 #' @export
+
 
 
 

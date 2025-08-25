@@ -1,4 +1,4 @@
-#' Calculate the Elbo and the gradients
+#' Calculate the Elbo with log(S) instead of S and the gradients
 #'
 #'
 #' @param data list(Y, R, X)

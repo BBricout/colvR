@@ -16,10 +16,10 @@ Init_ZIP_q0(Y, X, q)
 \value{
 A list with elements:
   \describe{
-    \item{B}{Matrix of Poisson regression coefficients (d x p).}
-    \item{D}{Matrix of logistic regression coefficients (d x p).}
+    \item{B}{Matrix of Poisson regression coefficients (1 x d).}
+    \item{D}{Matrix of logistic regression coefficients (1 x d).}
   }
 }
 \description{
-Parameters initialisation in the zero inflated case
+Parameters initialisation in the zero inflated case without the latent factors
 }

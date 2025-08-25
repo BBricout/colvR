@@ -2,7 +2,7 @@
 % Please edit documentation in R/Elbo_grad_logS.R
 \name{Elbo_grad_logS}
 \alias{Elbo_grad_logS}
-\title{Calculate the Elbo and the gradients}
+\title{Calculate the Elbo with log(S) instead of S and the gradients}
 \usage{
 Elbo_grad_logS(data, params)
 }
@@ -15,5 +15,5 @@ Elbo_grad_logS(data, params)
 Elbo and gradients
 }
 \description{
-Calculate the Elbo and the gradients
+Calculate the Elbo with log(S) instead of S and the gradients
 }

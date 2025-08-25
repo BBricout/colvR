@@ -1,13 +1,13 @@
 #' Init_ZIP_q0
 #'
-#' Parameters initialisation in the zero inflated case
+#' Parameters initialisation in the zero inflated case without the latent factors
 #' @param Y count matrix
 #' @param X covariates
 #' @param q size of the latent space
 #' @return A list with elements:
 #'   \describe{
-#'     \item{B}{Matrix of Poisson regression coefficients (d x p).}
-#'     \item{D}{Matrix of logistic regression coefficients (d x p).}
+#'     \item{B}{Matrix of Poisson regression coefficients (1 x d).}
+#'     \item{D}{Matrix of logistic regression coefficients (1 x d).}
 #'   }
 #' @export
 

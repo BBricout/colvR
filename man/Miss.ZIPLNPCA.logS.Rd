@@ -2,7 +2,7 @@
 % Please edit documentation in R/Miss_ZIPLNPCA_logS.R
 \name{Miss.ZIPLNPCA.logS}
 \alias{Miss.ZIPLNPCA.logS}
-\title{Miss.ZIPLNPCA.logS}
+\title{ZI‑PLN-PCA with missing data using log(S) parametrization}
 \usage{
 Miss.ZIPLNPCA.logS(
   Y,
@@ -15,21 +15,78 @@ Miss.ZIPLNPCA.logS(
 )
 }
 \arguments{
-\item{Y}{count matrix}
+\item{Y}{Numeric \code{n x p} count matrix. May contain \code{NA}.}
 
-\item{X}{covariates}
+\item{X}{Numeric design matrix with \code{n*p} rows and \code{d} columns,
+aligned with \code{vec(Y)} (vectorization by columns).}
 
-\item{q}{size of the latent space}
+\item{q}{Integer, latent rank (dimension of the latent space).}
 
-\item{params}{Initial parameters}
+\item{params}{Optional list of initial parameters. If \code{NULL}, they are
+initialized by \code{\link{Init_ZIP}}. If provided, it must include a
+positive \code{S}; the function internally adds \code{logS <- log(S)}.}
 
-\item{config}{configuration of the optimizer}
+\item{config}{Optional list of optimizer controls. If \code{NULL}, defaults
+to \code{PLNPCA_param()$config_optim}.}
 
-\item{tolS}{S tolerance}
+\item{tolxi}{Numeric tolerance for the Jaakkola‑type \eqn{\xi} updates in the
+logistic bound (default \code{1e-4}).}
+
+\item{tolLogS}{Numeric upper bound applied to \code{logS} (box constraint).
+Defaults to \code{Inf}. Use this to avoid excessively large variational
+scales when needed.}
 }
 \value{
-A list of the estimated parameters
+A list with components:
+\describe{
+  \item{\code{mStep}}{Model parameters: \code{gamma} (\code{d x 1}),
+    \code{beta} (\code{d x 1}), and loadings \code{C} (\code{p x q}).}
+  \item{\code{eStep}}{Variational parameters: means \code{M} (\code{n x q}),
+    scales \code{S} (\code{n x q}), and logistic bound parameters \code{xi}
+    (\code{n x p}).}
+  \item{\code{pred}}{List with predictors and expected counts:
+    \code{mu} (\code{n x p}), \code{nu} (\code{n x p}), backend Poisson mean
+    \code{A} (\code{n x p}), and \code{predicted} recomputed in R:
+    \deqn{\exp\!\big( X B + M C^\top + 0.5\,(S\odot S)\,(C\odot C)^\top \big).}}
+  \item{\code{imputed}}{\code{n x p} matrix equal to \code{xi * A} at missing
+    entries of \code{Y}, and \code{Y} elsewhere.}
+  \item{\code{iter}}{Number of iterations; \code{elboPath} (trajectory of ELBO);
+    \code{elbo} (final ELBO).}
+  \item{\code{params.init}}{Initial parameters passed to the backend (with
+    \code{logS} added).}
+  \item{\code{monitoring}}{Optimizer diagnostics/logs.}
+  \item{\code{gradB, gradD, gradC, gradM, gradS}}{ELBO gradients w.r.t.
+    corresponding parameters (via \code{\link{Elbo_grad}}).}
+}
 }
 \description{
-Estimation of the parameters and the missing data using the log(S) instead of the S parameter
+Fits a zero‑inflated Poisson log‑normal (ZI‑PLN-PCA) latent factor model to a
+count matrix with missing values, using a variational objective and an
+\strong{alternative parametrization} on the variational scales:
+\deqn{ \log S \text{ instead of } S. }
+This guarantees positivity of \(S\) and allows simple box constraints on
+\(\log S\) via \code{tolLogS}.
+}
+\details{
+Missing entries are handled by a mask \code{R = 1_{observed}(Y)}; a working
+matrix \code{Y.na} sets missings to 0 for the objective evaluation.
+Box constraints are set on \code{logS} via \code{config$upper_bounds}, using
+\code{tolLogS}. Make sure \code{X} matches \code{vec(Y)}.
+}
+\examples{
+\dontrun{
+set.seed(1)
+n <- 40; p <- 12; d <- 3; q <- 2
+Y <- matrix(rpois(n*p, 2), n, p); Y[sample(length(Y), 20)] <- NA
+X <- cbind(1, rnorm(n*p), rnorm(n*p))  # (n*p) x d
+
+fit <- Miss.ZIPLNPCA.logS(Y = Y, X = X, q = q, tolLogS = 2)  # cap logS
+fit$elbo
+str(fit$eStep$S)
+}
+
+}
+\seealso{
+\code{\link{Miss.ZIPLNPCA}} for the \code{S} parametrization,
+  \code{\link{Init_ZIP}}, \code{\link{Elbo_grad}}
 }
