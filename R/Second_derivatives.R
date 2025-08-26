@@ -97,7 +97,7 @@ inv.Grad2Xi <- function(xi, Y, R){
 #' @keywords internal
 #' @noRd
 
-gradBC <- function(R, xi, A, M, C, S, n, p){
+gradBC <- function(R, X, xi, A, M, C, S, n, p){
   indices <- lapply(1:n, function(i) 
     sapply(1:p-1, function(k) k * n + i))
   grad <- vector("list", p)

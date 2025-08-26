@@ -3,9 +3,9 @@
 #' Fits a zero‑inflated Poisson log‑normal (ZI‑PLN-PCA) latent factor model to a
 #' count matrix with missing values, using a variational objective and an
 #' \strong{alternative parametrization} on the variational scales:
-#' \deqn{ \log S \text{ instead of } S. }
+#' \deqn{ \code{log(S)} \text{ instead of } S. }
 #' This guarantees positivity of \(S\) and allows simple box constraints on
-#' \(\log S\) via \code{tolLogS}.
+#' \(\code{log(S)} \) via \code{tolLogS}.
 #'
 #' @param Y Numeric \code{n x p} count matrix. May contain \code{NA}.
 #' @param X Numeric design matrix with \code{n*p} rows and \code{d} columns,

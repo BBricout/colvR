@@ -18,7 +18,7 @@ HessTheta <- function(Y, X, fit){
   hessgamma <- grad2gamma(xi, pi, X, n, p)
   hessbeta  <- grad2beta(R, xi, A, X, n, p)
   hessC     <- grad2C(R, xi, A, M, C, S, n, p)
-  hessBC    <- gradBC(R = R, xi = xi, A = A, M = M, C = C, S = S, n = n, p = p)
+  hessBC    <- gradBC(R = R, X = X, xi = xi, A = A, M = M, C = C, S = S, n = n, p = p)
   
   DiagGrad2Theta <- lapply(1:n, function(i) {
     do.call(c, list(
@@ -193,15 +193,4 @@ V_theta <- function(Y, X, fit){
   return(var_sym)
 }
 
-#' 95% interval for a theta
-#'
-#' Computes the 95% interval for theta.
-#'
-#' @param theta vector theta.
-#' @param var Associated variance (vector).
-#' @return Length-2 vector: lower and upper bounds.
-#' @export
-IC <- function(theta, var){
-  IC_theta <- c(theta - 1.96*sqrt(var), theta + 1.96*sqrt(var))
-  return(IC_theta)
-}
+

@@ -63,9 +63,9 @@ A list with components:
 Fits a zero‑inflated Poisson log‑normal (ZI‑PLN-PCA) latent factor model to a
 count matrix with missing values, using a variational objective and an
 \strong{alternative parametrization} on the variational scales:
-\deqn{ \log S \text{ instead of } S. }
+\deqn{ \code{log(S)} \text{ instead of } S. }
 This guarantees positivity of \(S\) and allows simple box constraints on
-\(\log S\) via \code{tolLogS}.
+\(\code{log(S)} \) via \code{tolLogS}.
 }
 \details{
 Missing entries are handled by a mask \code{R = 1_{observed}(Y)}; a working

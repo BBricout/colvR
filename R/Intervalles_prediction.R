@@ -62,7 +62,7 @@ Predictions <- function(Y, X, fit, MC){
     VE.sample[[m]]$eStep$xi)
   
   U <- lapply(1:MC, function(m)
-    matrix(rbinom(n*p, p = xi.VE[[m]], size = 1), nrow = n))
+    matrix(rbinom(n*p, prob = xi.VE[[m]], size = 1), nrow = n))
   
   mu <- lapply(1:MC, function(m)
     mu.sample[[m]] + VE.sample[[m]]$eStep$M %*% t(C.sample[[m]]))

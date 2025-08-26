@@ -48,7 +48,7 @@ Simul <- function(X,theta, dim){
   
   
   Prob <- plogis(nu)
-  U <- matrix(rbinom(n*p, p = Prob, size = 1), nrow = n)
+  U <- matrix(rbinom(n*p, prob = Prob, size = 1), nrow = n)
   
   W <- matrix(rnorm(n*q), nrow = n)
   CW <- W %*% t(C)

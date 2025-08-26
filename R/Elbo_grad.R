@@ -36,24 +36,6 @@
 #' \code{Elbo_grad_Rcpp}. Ensure the dimensions of \code{X}, \code{R} and
 #' the parameter matrices are compatible with \code{Y}.
 #'
-#' @examples
-#' set.seed(1)
-#' n <- 20; p <- 5; d <- 2; r <- 2; q <- 2
-#' Y <- matrix(rpois(n * p, 2), n, p); Y[sample(length(Y), 5)] <- NA
-#' X <- cbind(1, rnorm(n))
-#' R <- cbind(1, rnorm(n))   # design for zero-inflation
-#' B <- matrix(0, d, p)
-#' D <- matrix(0, r, p)
-#' C <- matrix(rnorm(p * q, 0, .1), p, q)
-#' M <- matrix(0, n, q)
-#' S <- matrix(0.1, n, q)
-#'
-#' out <- Elbo_grad(
-#'   data   = list(Y = Y, X = X, R = R),
-#'   params = list(B = B, D = D, C = C, M = M, S = S),
-#'   tolxi  = 1e-6
-#' )
-#' out$elbo
 #'
 #' @seealso \code{Elbo_grad_Rcpp} (backend C++).
 #' @export
