@@ -7,7 +7,7 @@ Authors@R:
            email = "barbara.bricout@gmail.com", 
            role = c("aut", "cre"))
 Description: The purpose of the package is to impute missing data in count tables using Poisson Lognormal with dimension reduction. The package offers two functions, one with and one without inflated zero.
-License: GPL (>= 3)
+License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 Imports:
