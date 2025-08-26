@@ -1,23 +1,34 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+Documentation: <https://BBricout.github.io/colvR/>
+
 # colvR
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/BBricout/colvR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/BBricout/colvR/actions/workflows/R-CMD-check.yaml)
+
+[![R-CMD-check](https://github.com/BBricout/colvR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/BBricout/colvR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of colvR is to …
+colvR provides modeling tools for count data — especially overdispersed
+data with many zeros — and includes missing-data imputation. It also
+exposes fast Rcpp/Armadillo utilities for matrix–vector conversions and
+low-rank ZIP/PLN optimization.
 
 ## Installation
 
-You can install the development version of colvR from
-[GitHub](https://github.com/) with:
+From GitHub:
 
 ``` r
-# install.packages("pak")
-pak::pak("BBricout/colvR")
+# install.packages("devtools")
+devtools::install_github("BBricout/colvR")
+
+library(colvR)
 ```
+
+When on CRAN, you’ll be able to do: install.packages(“colvR”)
 
 ## Example
 
@@ -25,29 +36,21 @@ This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(colvR)
-## basic example code
+#> 
+#> Attachement du package : 'colvR'
+#> L'objet suivant est masqué depuis 'package:stats':
+#> 
+#>     BIC
+
+n <- 1500 ; p <- 30 ; q <- 4 ; d <- 4
+dim <- list(n = n, p = p, d = d, q = q)
+X <- cbind(rep(1, n*p), rnorm(n*p), rep(rnorm(n), p))
+trend <- rep(1:p, each = n)
+X <- cbind(X, scale(trend))
+B <- c(2, 0.7, 0.5, -0.6) ; D <- c(-0.5, 0.5, 0.4, -0.4) ; C <- matrix(rnorm(p*q)/2, nrow = p, ncol = q)
+theta <- list(B = B, D = D, C = C)
+
+sim <- Simul(X, theta, dim) ; Y <- sim$Y
+
+fit <- Miss.ZIPLNPCA(Y, X, q)
 ```
-
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
-
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
