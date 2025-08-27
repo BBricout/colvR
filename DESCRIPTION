@@ -3,23 +3,29 @@ Type: Package
 Title: Poisson Lognormal with Dimension Reduction for Count Matrices with Missing Data
 Version: 0.1.0
 Authors@R: 
-    person("Barbara", "Bricout", 
-           email = "barbara.bricout@gmail.com", 
+    person("Barbara", "Bricout",
+           email = "barbara.bricout@gmail.com",
            role = c("aut", "cre"))
-Description: The purpose of the package is to impute missing data in count tables using Poisson Lognormal with dimension reduction. The package offers two functions, one with and one without inflated zero.
-License: GPL (>= 3)
+Description: Impute missing data in count tables using a Poisson lognormal model with dimension reduction, with and without zero inflation.
+License: GPL-3 | file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 Imports:
     Rcpp,
-    nloptr,
     PLNmodels,
     Matrix,
     mvtnorm,
     pbapply
 LinkingTo:
     Rcpp,
-    nloptr,
-    RcppArmadillo
-SystemRequirements: C++17
+    RcppArmadillo,
+    nloptr
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+SystemRequirements: NLopt, C++17
 Maintainer: Barbara Bricout <barbara.bricout@gmail.com>
+

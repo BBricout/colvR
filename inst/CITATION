@@ -1,11 +1,12 @@
-bibentry(
-  bibtype  = "Article",
-  title    = ,
-  author   = ,
-  journal  = ,
-  year     = ,
-  volume   = ,
-  number   = ,
-  pages    = ,
-  doi      =
+citHeader("Please cite this package as:")
+
+citEntry(
+  entry       = "Article",
+  title       = "colvR: Dimension reduction Poisson lognormal models for zero-inflated count imputation",
+  author      = person("Barbara", "Bricout"),
+  journal     = "arXiv",
+  year        = "2025",
+  doi         = "10.0000/placeholder",
+  textVersion = "Bricout, B. (2025). colvR: Dimension reduction Poisson lognormal models for zero-inflated count imputation. arXiv. doi:10.0000/placeholder."
 )
+

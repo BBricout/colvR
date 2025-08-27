@@ -1,6 +1,7 @@
 CXX_STD = CXX17
-PKG_CPPFLAGS = -DSTRICT_R_HEADERS \
-  $(shell "${R_HOME}/bin/Rscript" -e "cat(nloptr:::CFlags())")
-PKG_LIBS = \
-  $(shell "${R_HOME}/bin/Rscript" -e "cat(nloptr:::LdFlags())")
+
+PKG_CPPFLAGS = -DSTRICT_R_HEADERS
+
+PKG_LIBS = -lnlopt $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
+
 
