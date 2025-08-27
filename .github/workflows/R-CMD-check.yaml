@@ -27,10 +27,21 @@ jobs:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: true
 
+      # --- System deps for NLopt ---
+      - name: Install system NLopt (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnlopt-dev
+
+      - name: Install system NLopt (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install nlopt || true
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          # installe toutes les deps du package (Imports/Suggests/LinkingTo)
-          # + ces paquets utiles au check ; on force nloptr explicitement
           extra-packages: |
             any::rcmdcheck
             any::Rcpp
@@ -38,9 +49,21 @@ jobs:
             any::nloptr
           needs: check
 
+      # --- Debug: print flags + Makevars to logs ---
+      - name: Debug nloptr flags + Makevars
+        run: |
+          Rscript -e "cat('nloptr version: ', as.character(packageVersion('nloptr')), '\n')"
+          Rscript -e "cat('CFlags: ', nloptr:::CFlags(), '\n')"
+          Rscript -e "cat('LdFlags:', nloptr:::LdFlags(), '\n')"
+          echo '--- src/Makevars ---'
+          sed -n '1,200p' src/Makevars || true
+          echo '--- src/Makevars.win ---'
+          sed -n '1,200p' src/Makevars.win || true
+
       - name: Check
         uses: r-lib/actions/check-r-package@v2
         with:
           args: 'c("--no-manual","--as-cran","--no-build-vignettes")'
           error-on: '"error"'
+
 
