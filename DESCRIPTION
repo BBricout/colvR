@@ -22,4 +22,4 @@ LinkingTo:
     nloptr,
     RcppArmadillo
 SystemRequirements: C++17
-Maintainer: Barbara Bricout <ton.email@exemple.org>
+Maintainer: Barbara Bricout <barbara.bricout@gmail.com>
