@@ -8,20 +8,24 @@ on:
     types: [published]
   workflow_dispatch:
 
-name: pkgdown.yaml
+name: pkgdown
 
 permissions: read-all
 
 jobs:
   pkgdown:
     runs-on: ubuntu-latest
-    # Only restrict concurrency for non-PR jobs
+
+    # Annule les builds en cours sur la même branche
     concurrency:
-      group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
+      group: pkgdown-${{ github.ref }}
+      cancel-in-progress: true
+
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     permissions:
       contents: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -30,6 +34,20 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
+
+      # --- Dépendances système (Linux) pour NLopt si ton package le requiert ---
+      - name: Install system NLopt (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnlopt-dev
+
+      # (facultatif) macOS au cas où tu passeras ce job en matrix OS un jour
+      # - name: Install system NLopt (macOS)
+      #   if: runner.os == 'macOS'
+      #   run: |
+      #     brew update
+      #     brew install nlopt || true
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -47,3 +65,4 @@ jobs:
           clean: false
           branch: gh-pages
           folder: docs
+
