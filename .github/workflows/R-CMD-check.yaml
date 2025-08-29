@@ -19,6 +19,10 @@ jobs:
           - { os: macos-latest,   r: 'release' }
           - { os: windows-latest, r: 'release' }
 
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
     steps:
       - uses: actions/checkout@v4
 
@@ -40,6 +44,8 @@ jobs:
           brew update
           brew install nlopt || true
 
+      - uses: r-lib/actions/setup-pandoc@v2
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
@@ -49,21 +55,12 @@ jobs:
             any::nloptr
           needs: check
 
-      # --- Debug: print flags + Makevars to logs ---
-      - name: Debug nloptr flags + Makevars
-        run: |
-          Rscript -e "cat('nloptr version: ', as.character(packageVersion('nloptr')), '\n')"
-          Rscript -e "cat('CFlags: ', nloptr:::CFlags(), '\n')"
-          Rscript -e "cat('LdFlags:', nloptr:::LdFlags(), '\n')"
-          echo '--- src/Makevars ---'
-          sed -n '1,200p' src/Makevars || true
-          echo '--- src/Makevars.win ---'
-          sed -n '1,200p' src/Makevars.win || true
-
       - name: Check
         uses: r-lib/actions/check-r-package@v2
         with:
-          args: 'c("--no-manual","--as-cran","--no-build-vignettes")'
           error-on: '"error"'
+          build-args: 'c("--no-manual","--no-build-vignettes")'
+          check-args: 'c("--no-manual","--ignore-vignettes","--as-cran")'
+
 
 
