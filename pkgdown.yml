@@ -3,7 +3,7 @@ pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   getting-started: getting-started.html
-last_built: 2025-08-29T13:07Z
+last_built: 2025-08-29T14:19Z
 urls:
   reference: https://bbricout.github.io/colvR/reference
   article: https://bbricout.github.io/colvR/articles
