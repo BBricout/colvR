@@ -15,7 +15,8 @@ Imports:
     PLNmodels,
     Matrix,
     mvtnorm,
-    pbapply
+    pbapply,
+    lori
 LinkingTo:
     Rcpp,
     RcppArmadillo,
@@ -28,4 +29,7 @@ Config/testthat/edition: 3
 VignetteBuilder: knitr
 SystemRequirements: NLopt, C++17
 Maintainer: Barbara Bricout <barbara.bricout@gmail.com>
-
+URL: https://bbricout.github.io/colvR/
+Depends: 
+    R (>= 3.5)
+LazyData: true
