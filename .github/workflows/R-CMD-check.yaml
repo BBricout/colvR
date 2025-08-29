@@ -31,20 +31,27 @@ jobs:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: true
 
-      # --- System deps for NLopt ---
-      - name: Install system NLopt (Linux)
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      # --- System deps (Linux) ---
+      - name: Install system deps (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y libnlopt-dev
 
-      - name: Install system NLopt (macOS)
+      # --- System deps (macOS) ---
+      - name: Install system deps (macOS)
         if: runner.os == 'macOS'
         run: |
           brew update
-          brew install nlopt || true
-
-      - uses: r-lib/actions/setup-pandoc@v2
+          brew install nlopt libomp || true
+          # Expose Homebrew paths to compilers/linker
+          echo "PKG_CONFIG_PATH=$(brew --prefix)/lib/pkgconfig" >> $GITHUB_ENV
+          echo "CPATH=$(brew --prefix)/include" >> $GITHUB_ENV
+          echo "LIBRARY_PATH=$(brew --prefix)/lib" >> $GITHUB_ENV
+          echo "LDFLAGS=-L$(brew --prefix)/lib" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I$(brew --prefix)/include" >> $GITHUB_ENV
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -61,6 +68,7 @@ jobs:
           error-on: '"error"'
           build-args: 'c("--no-manual","--no-build-vignettes")'
           check-args: 'c("--no-manual","--ignore-vignettes","--as-cran")'
+
 
 
 
