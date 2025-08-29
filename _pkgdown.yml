@@ -1,4 +1,103 @@
+# pkgdown configuration for colvR
+# Build locally: pkgdown::build_site()
+
 url: https://bbricout.github.io/colvR/
+
 template:
   bootstrap: 5
+  bootswatch: cosmo
+  bslib:
+    pkgdown-nav-height: 60px
+  mathjax: true
+  # Optionnel : favicon / includes
+  # includes:
+  #   in_header: pkgdown/extra/head.html
+
+home:
+  title: "colvR"
+  description: "Zero-inflated Poisson log-normal with latent PCA for imputation of ecological count data."
+  links:
+    - text: Source on GitHub
+      href: https://github.com/BBricout/colvR
+    - text: Report a bug
+      href: https://github.com/BBricout/colvR/issues
+
+navbar:
+  structure:
+    left:  [reference, articles, news]
+    right: [search, github]
+  components:
+    reference:
+      text: Reference
+      href: reference/index.html
+    articles:
+      text: Articles
+      href: articles/index.html
+    news:
+      text: Changelog
+      href: news/index.html
+    github:
+      icon: fab fa-github
+      aria-label: "GitHub repository"
+      href: https://github.com/BBricout/colvR
+
+reference:
+  - title: "Core modelling"
+    desc: "Fit, model selection, variance and confidence intervals."
+    contents:
+      - Miss.ZIPLNPCA
+      - select_model_bic
+      - V_theta
+      - IC
+      - BIC          # <-- added
+
+  - title: "Initialisation"
+    desc: "Helpers for initial parameters."
+    contents:
+      - Init
+      - Init_ZIP
+      - Init_ZIP_q0
+
+  - title: "Optimisation & maths"
+    desc: "Lower bounds, gradients, covariance utilities."
+    contents:
+      - Elbo_grad
+      - Elbo_grad_logS
+      - covmat
+
+  - title: "Additional models & helpers"
+    desc: "Complementary wrappers and step-wise routines."
+    contents:
+      - Miss.PLNPCA
+      - Miss.ZIPLNPCA.logS
+      - Miss.ZIPLNPCA_Steps
+      - Miss.ZIPLNPCA_VE
+      - Predictions
+
+  - title: "Utilities & simulation"
+    desc: "Simulation tools and helpers."
+    contents:
+      - Simul        # <-- added
+
+  - title: "Data"
+    desc: "Datasets bundled with colvR."
+    contents:
+      - fuligule_milouin
+
+
+articles:
+  - title: "Getting started"
+    contents:
+      - "getting-started"      # ← correspond exactement au nom de fichier sans .Rmd
+
+
+
+news:
+  one_page: true
+
+development:
+  mode: auto
+
+search:
+  exclude: []   # keep everything indexed
 
