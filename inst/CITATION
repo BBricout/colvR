@@ -1,12 +1,11 @@
-citHeader("Please cite this package as:")
+citHeader("To cite colvR in publications, please use:")
 
-citEntry(
-  entry       = "Article",
-  title       = "colvR: Dimension reduction Poisson lognormal models for zero-inflated count imputation",
-  author      = person("Barbara", "Bricout"),
-  journal     = "arXiv",
-  year        = "2025",
-  doi         = "10.0000/placeholder",
-  textVersion = "Bricout, B. (2025). colvR: Dimension reduction Poisson lognormal models for zero-inflated count imputation. arXiv. doi:10.0000/placeholder."
+bibentry(
+  bibtype = "Manual",
+  title   = "{colvR}: Zero-inflated Poisson log-normal with latent PCA for for incomplete data",
+  author  = person(given = "Barbara", family = "Bricout"),
+  year    = 2025,
+  note    = "R package version 0.1.0",
+  url     = "https://bbricout.github.io/colvR/"
 )
 
