@@ -14,6 +14,12 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r setup, include=FALSE}
+# Si torch était chargé par un profil/IDE, on le décharge proprement.
+if ("torch" %in% loadedNamespaces()) try(unloadNamespace("torch"), silent = TRUE)
+```
+
+
 The **`colvR`** package provides tools for the analysis of multivariate count data that exhibit both 
 **overdispersion** and **zero-inflation**, two common features in ecological and environmental datasets.  
 In particular, the package makes it possible to **impute missing data**, to estimate **Poisson log-normal models** 
@@ -119,13 +125,17 @@ if (use_precomputed) {
   # saveRDS(bics, file = "inst/extdata/bics_fuligule.rds", compress = "xz")
 }
 
-# Plot
-plot(as.numeric(names(bics)), as.numeric(bics), type = "b",
-     xlab = "Latent dimension q", ylab = "BIC")
-
 # Selected q (robuste aux noms)
 q <- if (!is.null(names(bics))) as.integer(names(bics)[which.max(bics)]) else q_grid[which.max(bics)]
 q
+```
+
+```{r bics_plot, fig.cap="Model selection via BIC", fig.alt="Line plot of BIC versus the latent dimension q for the fuligule_milouin data; the selected q maximizes BIC."}
+plot(q_grid, as.numeric(bics), type = "b",
+     xlab = "Latent dimension q", ylab = "BIC")
+# (optionnel) surligner q*
+points(q, bics[which.max(bics)], pch = 19, cex = 1.2)
+abline(v = q, lty = 2)
 ```
 
 
@@ -168,7 +178,7 @@ Intervals <- IC(theta, var)
 We now display the point estimates and 95% confidence intervals for the regression
 coefficients of the presence model (\(\gamma\)) and the abundance model (\(\beta\)).
 
-```{r}
+```{r ci_forest_plot, fig.cap="Regression coefficients with 95% confidence intervals", fig.alt="Horizontal dot-and-whisker plot showing gamma (presence) and beta (abundance) coefficients with their 95% confidence intervals; a vertical line marks zero."}
 # Build a compact table of estimates and 95% CIs (no dependency on IC())
 se <- sqrt(var)
 par_names <- c(paste0("gamma_", seq_len(d)), paste0("beta_", seq_len(d)))
