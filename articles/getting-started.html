@@ -204,12 +204,37 @@ models fitted with different values of
 based on the Bayesian Information Criterion (BIC). The selected value
 corresponds to the latent space<br>
 dimension that maximizes the BIC score.</p>
+<p>We rely on precomputed BIC values (saved in the package) to keep the
+vignette fast. If you want to recompute them locally, set
+<code>Sys.setenv(NOT_CRAN = "true")</code> before knitting.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bics</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_model_bic.html">select_model_bic</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, <span class="va">Miss.ZIPLNPCA</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">p</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bics</span>, type <span class="op">=</span> <span class="st">"b"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getting-started_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
+<code class="sourceCode R"><span><span class="va">q_grid</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="va">p</span></span>
+<span></span>
+<span><span class="va">use_precomputed</span> <span class="op">&lt;-</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"NOT_CRAN"</span><span class="op">)</span>, <span class="st">"true"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="va">use_precomputed</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">bics</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"bics_fuligule.rds"</span>, package <span class="op">=</span> <span class="st">"colvR"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>  <span class="va">bics</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_model_bic.html">select_model_bic</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, <span class="va">Miss.ZIPLNPCA</span>, <span class="va">q_grid</span><span class="op">)</span></span>
+<span>  <span class="co"># (Optionnel) sauvegarder à nouveau si vous voulez mettre à jour le package :</span></span>
+<span>  <span class="co"># saveRDS(bics, file = "inst/extdata/bics_fuligule.rds", compress = "xz")</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Selected q (robuste aux noms)</span></span>
+<span><span class="va">q</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">bics</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">bics</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">bics</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="kw">else</span> <span class="va">q_grid</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">bics</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">q</span></span>
+<span><span class="co">#&gt; [1] 12</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">bics</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">q_grid</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">bics</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"b"</span>,</span>
+<span>     xlab <span class="op">=</span> <span class="st">"Latent dimension q"</span>, ylab <span class="op">=</span> <span class="st">"BIC"</span><span class="op">)</span></span>
+<span><span class="co"># (optionnel) surligner q*</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">q</span>, <span class="va">bics</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">bics</span><span class="op">)</span><span class="op">]</span>, pch <span class="op">=</span> <span class="fl">19</span>, cex <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="va">q</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="getting-started_files/figure-html/bics_plot-1.png" alt="Line plot of BIC versus the latent dimension q for the fuligule_milouin data; the selected q maximizes BIC." width="700"><p class="caption">
+Model selection via BIC
+</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="fit">Fit<a class="anchor" aria-label="anchor" href="#fit"></a>
@@ -289,7 +314,11 @@ and the abundance model
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>, inset <span class="op">=</span> <span class="fl">0.01</span>, bty <span class="op">=</span> <span class="st">"n"</span>,</span>
 <span>       legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gamma (presence)"</span>, <span class="st">"beta (abundance)"</span><span class="op">)</span>,</span>
 <span>       pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="st">"gray30"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getting-started_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<div class="figure">
+<img src="getting-started_files/figure-html/ci_forest_plot-1.png" alt="Horizontal dot-and-whisker plot showing gamma (presence) and beta (abundance) coefficients with their 95% confidence intervals; a vertical line marks zero." width="700"><p class="caption">
+Regression coefficients with 95% confidence intervals
+</p>
+</div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">op</span><span class="op">)</span></span></code></pre></div>
 </div>
