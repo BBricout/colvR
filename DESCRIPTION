@@ -10,6 +10,7 @@ Description: Impute missing data in count tables using a Poisson lognormal model
 License: GPL-3 | file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.3.2
+Language : en-US
 Imports:
     Rcpp,
     PLNmodels,
@@ -24,7 +25,8 @@ LinkingTo:
 Suggests:
     testthat (>= 3.0.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    spelling
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 SystemRequirements: NLopt, C++17

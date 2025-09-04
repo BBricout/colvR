@@ -2,10 +2,10 @@
 #'
 #' Thin helper that calls \code{lori::covmat()} without requiring users to
 #' attach the \pkg{lori} package. It constructs the block-structured
-#' covariate matrix \(X\) (with \(n \times p\) rows) from site-level covariates
-#' \code{R}, year-level covariates \code{C}, and optional site–year covariates
-#' \code{E}. Any of \code{R}, \code{C}, or \code{E} can be \code{NULL} to omit
-#' that block.
+#' covariate matrix \eqn{X} (with \eqn{n \times p} rows) from site-level
+#' covariates \code{R}, year-level covariates \code{C}, and optional site–year
+#' covariates \code{E}. Any of \code{R}, \code{C}, or \code{E} can be \code{NULL}
+#' to omit that block.
 #'
 #' @inheritParams lori::covmat
 #' @return A numeric matrix with \eqn{n \times p} rows and
@@ -22,6 +22,10 @@
 #'   X <- covmat(n, p, R = R, C = C)
 #'   dim(X)  # 6 x 4
 #' }
+covmat <- function(n, p, R = NULL, C = NULL, E = NULL, center = FALSE) {
+  lori::covmat(n = n, p = p, R = R, C = C, E = E, center = center)
+}
+
 covmat <- function(n, p, R = NULL, C = NULL, E = NULL, center = FALSE) {
   lori::covmat(n = n, p = p, R = R, C = C, E = E, center = center)
 }

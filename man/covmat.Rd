@@ -2,7 +2,7 @@
 % Please edit documentation in R/covmat.R
 \name{covmat}
 \alias{covmat}
-\title{Wrapper pour covmat du package lori}
+\title{Wrapper for `lori::covmat`}
 \usage{
 covmat(n, p, R = NULL, C = NULL, E = NULL, center = FALSE)
 }
@@ -20,18 +20,28 @@ covmat(n, p, R = NULL, C = NULL, E = NULL, center = FALSE)
 \item{center}{boolean indicating whether the returned covariate matrix should be centered (for identifiability)}
 }
 \value{
-La matrice de covariables telle que calculée par \code{lori::covmat}.
+A numeric matrix with \eqn{n \times p} rows and
+        \eqn{d = d_R + d_C + d_E} columns (when present), identical to the
+        value returned by \code{lori::covmat()}.
 }
 \description{
-Cette fonction appelle directement \code{lori::covmat}. 
-Elle est fournie ici pour éviter à l'utilisateur de charger lori.
+Thin helper that calls \code{lori::covmat()} without requiring users to
+attach the \pkg{lori} package. It constructs the block-structured
+covariate matrix \(X\) (with \(n \times p\) rows) from site-level covariates
+\code{R}, year-level covariates \code{C}, and optional site–year covariates
+\code{E}. Any of \code{R}, \code{C}, or \code{E} can be \code{NULL} to omit
+that block.
 }
 \examples{
 if (requireNamespace("lori", quietly = TRUE)) {
+  set.seed(1)
   n <- 3; p <- 2
-  R <- matrix(rnorm(n*2), n)
-  C <- matrix(rnorm(p*2), p)
-  X <- covmat(n, p, R, C)
+  R <- matrix(rnorm(n * 2), nrow = n, ncol = 2)  # site-level (d_R = 2)
+  C <- matrix(rnorm(p * 2), nrow = p, ncol = 2)  # year-level (d_C = 2)
+  X <- covmat(n, p, R = R, C = C)
   dim(X)  # 6 x 4
 }
+}
+\seealso{
+\code{\link[lori]{covmat}}
 }
