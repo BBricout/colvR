@@ -7,22 +7,27 @@
 covmat(n, p, R = NULL, C = NULL, E = NULL, center = FALSE)
 }
 \arguments{
-\item{n}{number of rows}
+\item{n}{Integer; number of sites.}
 
-\item{p}{number ofcolumns}
+\item{p}{Integer; number of years.}
 
-\item{R}{nxK1 matrix of row covariates}
+\item{R}{Optional numeric matrix with \eqn{n} rows and \eqn{d_R} columns
+(site-level covariates). Default: \code{NULL}.}
 
-\item{C}{nxK2 matrix of column covariates}
+\item{C}{Optional numeric matrix with \eqn{p} rows and \eqn{d_C} columns
+(year-level covariates). Default: \code{NULL}.}
 
-\item{E}{(n+p)xK3 matrix of row-column covariates}
+\item{E}{Optional numeric matrix with \eqn{n p} rows and \eqn{d_E} columns
+(site–year covariates; one row per site–year observation in the same order
+as \eqn{X}). Default: \code{NULL}.}
 
-\item{center}{boolean indicating whether the returned covariate matrix should be centered (for identifiability)}
+\item{center}{Logical; whether to center columns within each block (as in
+\code{lori::covmat}). Default: \code{FALSE}.}
 }
 \value{
 A numeric matrix with \eqn{n \times p} rows and
-        \eqn{d = d_R + d_C + d_E} columns (when present), identical to the
-        value returned by \code{lori::covmat()}.
+  \eqn{d = d_R + d_C + d_E} columns (when present), identical to the value
+  returned by \code{lori::covmat()}.
 }
 \description{
 Thin helper that calls \code{lori::covmat()} without requiring users to
