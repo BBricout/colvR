@@ -27,10 +27,10 @@ A numeric matrix with \eqn{n \times p} rows and
 \description{
 Thin helper that calls \code{lori::covmat()} without requiring users to
 attach the \pkg{lori} package. It constructs the block-structured
-covariate matrix \(X\) (with \(n \times p\) rows) from site-level covariates
-\code{R}, year-level covariates \code{C}, and optional site–year covariates
-\code{E}. Any of \code{R}, \code{C}, or \code{E} can be \code{NULL} to omit
-that block.
+covariate matrix \eqn{X} (with \eqn{n \times p} rows) from site-level
+covariates \code{R}, year-level covariates \code{C}, and optional site–year
+covariates \code{E}. Any of \code{R}, \code{C}, or \code{E} can be \code{NULL}
+to omit that block.
 }
 \examples{
 if (requireNamespace("lori", quietly = TRUE)) {
