@@ -125,7 +125,7 @@ Miss.PLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des donné
 
   iter <- out$monitoring$iterations
   elboPath <- out$objective_values
-  elbo <- out$objective
+  elbo <- -out$objective
 
   res <- list(mStep = mStep,
               eStep = eStep,

@@ -24,7 +24,7 @@
 
 select_model_bic <- function(Y, X, fun, latents){
   fits <- pblapply(latents, function(j)
-    fun(Y, X, latents[j]))
+    fun(Y = Y, X = X, q = latents[j]))
   bic <- unlist(lapply(latents, function(j)
     BIC(Y, X, fits[[j]], latents[[j]])))
   return(bic)
