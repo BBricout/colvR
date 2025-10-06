@@ -17,7 +17,8 @@ Imports:
     Matrix,
     mvtnorm,
     pbapply,
-    lori
+    lori,
+    MASS
 LinkingTo:
     Rcpp,
     RcppArmadillo,

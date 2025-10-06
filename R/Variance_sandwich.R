@@ -177,20 +177,49 @@ D_theta <- function(Y, X, fit){
 #'
 #' Computes \eqn{V(\hat\theta)} via the sandwich formula.
 #'
+#' @importFrom MASS ginv
 #' @param Y An n x p matrix (counts).
 #' @param X An (n*p) x d matrix (design stacked in blocks of size n).
 #' @param fit Output list from your estimator.
 #' @return Symmetrized variance–covariance matrix.
 #' @export
 
-V_theta <- function(Y, X, fit){
+V_theta <- function(Y, X, fit, ginv_tol = 1e-12, verbose = TRUE) {
   n <- nrow(Y)
+  
+  # Construire Ctheta (et la forcer symétrique numériquement)
   Ctheta <- C_theta(Y, X, fit)
+  Ctheta <- as.matrix(Ctheta)
+  Ctheta <- 0.5 * (Ctheta + t(Ctheta))
+  
+  # Dtheta
   Dtheta <- D_theta(Y, X, fit)
-  V_theta <- solve(Ctheta) %*% Dtheta %*% solve(Ctheta)
-  var <- (1/n)*V_theta
-  var_sym <- (var + t(var)) / 2
+  
+  # Inversion "safe" : try solve(), sinon pseudo-inverse
+  Cinv <- tryCatch(solve(Ctheta),
+                   error = function(e) NA)
+  
+  # Si solve() échoue ou donne des non-finis, on utilise ginv()
+  if (is.atomic(Cinv) && length(Cinv) == 1 && is.na(Cinv) ||
+      any(!is.finite(Cinv))) {
+    if (verbose) message("solve() a échoué ou est instable → utilisation de MASS::ginv().")
+    if (!requireNamespace("MASS", quietly = TRUE)) {
+      stop("solve() a échoué et le package 'MASS' n'est pas disponible pour ginv().")
+    }
+    Cinv <- MASS::ginv(Ctheta, tol = ginv_tol)
+  }
+  
+  # Sandwich
+  Vt <- Cinv %*% Dtheta %*% Cinv
+  
+  # Mise à l'échelle et symétrisation finale
+  var <- (1 / n) * Vt
+  var_sym <- 0.5 * (var + t(var))
   return(var_sym)
 }
+
+
+
+
 
 
