@@ -1,7 +1,7 @@
 Package: colvR
 Type: Package
 Title: Poisson Lognormal with Dimension Reduction for Count Matrices with Missing Data
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: 
     person("Barbara", "Bricout",
            email = "barbara.bricout@gmail.com",
