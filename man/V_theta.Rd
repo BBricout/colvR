@@ -4,7 +4,7 @@
 \alias{V_theta}
 \title{Variance–covariance of theta}
 \usage{
-V_theta(Y, X, fit)
+V_theta(Y, X, fit, ginv_tol = 1e-12, verbose = TRUE)
 }
 \arguments{
 \item{Y}{An n x p matrix (counts).}
