@@ -83,13 +83,11 @@ Predictions <- function(Y, X, fit, MC){
   
   Y_sim_arr <- simplify2array(pred)
   
-  Y_pred_lower <- apply(Y_sim_arr, c(1, 2), function(x) quantile(x, 0.025))
-  Y_pred_upper <- apply(Y_sim_arr, c(1, 2), function(x) quantile(x, 0.975))
+  Y_pred_lower <- apply(Y_sim_arr, c(1, 2), function(x) quantile(x, 0))
+  Y_pred_upper <- apply(Y_sim_arr, c(1, 2), function(x) quantile(x, 0.9))
   
-  level <- mean((Y - Y_pred_lower)*(Y_pred_upper - Y) >= 0, na.rm = TRUE)
   
-  res <- list(Z = Z, U = U, Y.hat = Y.hat, pred = pred, xi = xi.VE,
-              lower = Y_pred_lower, upper = Y_pred_upper, level = level)
+  res <- list(lower = Y_pred_lower, upper = Y_pred_upper)
   
   return(res)
   

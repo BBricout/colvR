@@ -2,15 +2,15 @@ Package: colvR
 Type: Package
 Title: Poisson Lognormal with Dimension Reduction for Count Matrices with Missing Data
 Version: 0.1.1
-Authors@R: 
+Authors@R:
     person("Barbara", "Bricout",
            email = "barbara.bricout@gmail.com",
            role = c("aut", "cre"))
 Description: Impute missing data in count tables using a Poisson lognormal model with dimension reduction, with and without zero inflation.
-License: GPL-3 | file LICENSE
+License: GPL-3 + file LICENSE
 Encoding: UTF-8
+Language: en-US
 RoxygenNote: 7.3.2
-Language : en-US
 Imports:
     Rcpp,
     PLNmodels,
@@ -31,9 +31,8 @@ Suggests:
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 SystemRequirements: NLopt, C++17
-Maintainer: Barbara Bricout <barbara.bricout@gmail.com>
 URL: https://github.com/BBricout/colvR, https://bbricout.github.io/colvR/
 BugReports: https://github.com/BBricout/colvR/issues
-Depends: 
+Depends:
     R (>= 3.5)
-LazyData: true
+

@@ -88,7 +88,7 @@ Predictions.marginales <- function(Y, X, fit, MC){
     plogis(nu[[m]]))
   
   U <- lapply(1:MC, function(m)
-    matrix(rbinom(n*p, p = pi[[m]], size = 1), nrow = n))
+    matrix(rbinom(n * p, size = 1, prob = pi[[m]]))
   
   mu <- lapply(1:MC, function(m)
     VectorToMatrix(X %*% matrix(beta.sample[[m]]), n, p))
@@ -108,13 +108,11 @@ Predictions.marginales <- function(Y, X, fit, MC){
   
   Y_sim_arr <- simplify2array(pred)
   
-  Y_pred_lower <- apply(Y_sim_arr, c(1, 2), function(x) quantile(x, 0.025))
-  Y_pred_upper <- apply(Y_sim_arr, c(1, 2), function(x) quantile(x, 0.975))
+  Y_pred_lower <- apply(Y_sim_arr, c(1, 2), function(x) quantile(x, 0))
+  Y_pred_upper <- apply(Y_sim_arr, c(1, 2), function(x) quantile(x, 0.9))
   
-  level <- mean((Y - Y_pred_lower)*(Y_pred_upper - Y) >= 0, na.rm = TRUE)
   
-  res <- list(Z = Z, U = U, Y.hat = Y.hat, pred = pred,
-              lower = Y_pred_lower, upper = Y_pred_upper, level = level)
+  res <- list(lower = Y_pred_lower, upper = Y_pred_upper)
   
   return(res)
 }

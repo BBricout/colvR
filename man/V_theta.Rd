@@ -2,20 +2,26 @@
 % Please edit documentation in R/Variance_sandwich.R
 \name{V_theta}
 \alias{V_theta}
-\title{Variance–covariance of theta}
+\title{Variance-covariance matrix of theta}
 \usage{
 V_theta(Y, X, fit, ginv_tol = 1e-12, verbose = TRUE)
 }
 \arguments{
-\item{Y}{An n x p matrix (counts).}
+\item{Y}{An n x p matrix of counts.}
 
-\item{X}{An (n*p) x d matrix (design stacked in blocks of size n).}
+\item{X}{An (n*p) x d design matrix, stacked by blocks of size n.}
 
-\item{fit}{Output list from your estimator.}
+\item{fit}{Output list returned by the estimator.}
+
+\item{ginv_tol}{Numeric tolerance used by MASS::ginv() when a pseudo-inverse
+is needed.}
+
+\item{verbose}{Logical; if TRUE, prints diagnostic messages when solve()
+fails or is unstable.}
 }
 \value{
-Symmetrized variance–covariance matrix.
+A symmetric variance-covariance matrix for theta.
 }
 \description{
-Computes \eqn{V(\hat\theta)} via the sandwich formula.
+Computes \eqn{V(\hat{\theta})} using a sandwich (robust) variance formula.
 }
