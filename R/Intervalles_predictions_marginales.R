@@ -87,8 +87,9 @@ Predictions.marginales <- function(Y, X, fit, MC){
   pi <- lapply(1:MC, function(m)
     plogis(nu[[m]]))
   
-  U <- lapply(1:MC, function(m)
-    matrix(rbinom(n * p, size = 1, prob = pi[[m]]))
+  U <- lapply(seq_len(MC), function(m) {
+    matrix(rbinom(n * p, size = 1, prob = pi[[m]]), nrow = n, ncol = p)
+  })
   
   mu <- lapply(1:MC, function(m)
     VectorToMatrix(X %*% matrix(beta.sample[[m]]), n, p))
