@@ -1,0 +1,33 @@
+BIC                     BIC from ELBO for a ZIP-PLN latent factor model
+Elbo_grad               ELBO and parameter gradients (ZIP‑PLN
+                        variational objective)
+Elbo_grad_logS          Calculate the Elbo with log(S) instead of S and
+                        the gradients
+IC                      95% interval for a theta 95% confidence
+                        interval for theta
+Init                    Initialize parameters for a PLN-PCA with
+                        missing data
+Init_ZIP                Initialize parameters for the ZIP case
+                        (zero-inflated)
+Init_ZIP_q0             Init_ZIP_q0
+Miss.PLNPCA             PLN-PCA with missing data (variational fit +
+                        imputation)
+Miss.ZIPLNPCA           ZI‑PLN-PCA with missing data (variational fit +
+                        imputation)
+Miss.ZIPLNPCA.logS      ZI‑PLN-PCA with missing data using log(S)
+                        parametrization
+Miss.ZIPLNPCA_Steps     ZI‑PLN-PCA (missing data) with parameterwise
+                        optimization steps
+Miss.ZIPLNPCA_VE        ZI‑PLN-PCA (missing data) — variational E‑step
+                        solver
+Predictions             Predictive simulations and intervals
+Predictions.marginales
+                        Prediction intervals (marginal) for
+                        ZIPLNPCA-like model
+Simul                   Simulate zero-inflated Poisson log-normal PCA
+                        data
+V_theta                 Variance-covariance matrix of theta
+covmat                  Wrapper for 'lori::covmat'
+fuligule_milouin        Fuligule milouin example dataset
+select_model_bic        Model selection by BIC over candidate latent
+                        dimensions

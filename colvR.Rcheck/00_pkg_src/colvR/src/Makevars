@@ -1,0 +1,9 @@
+CXX_STD = CXX17
+
+## En-têtes stricts R
+PKG_CPPFLAGS = -DSTRICT_R_HEADERS
+
+## Lien contre NLopt + BLAS/LAPACK/Fortran
+PKG_LIBS = -lnlopt $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
+
+

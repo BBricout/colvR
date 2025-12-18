@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Getting started with colvR</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Getting started with colvR</h1>
+
+
+
+<p>The <strong><code>colvR</code></strong> package provides tools for the analysis of multivariate count data that exhibit both <strong>overdispersion</strong> and <strong>zero-inflation</strong>, two common features in ecological and environmental datasets.<br />
+In particular, the package makes it possible to <strong>impute missing data</strong>, to estimate <strong>Poisson log-normal models</strong> enriched with a <strong>latent PCA component</strong>, and to optimize model parameters through efficient numerical routines.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(colvR)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="co">#&gt; Attachement du package : &#39;colvR&#39;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="co">#&gt; L&#39;objet suivant est masqué depuis &#39;package:stats&#39;:</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a><span class="co">#&gt; </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a><span class="co">#&gt;     BIC</span></span></code></pre></div>
+<div id="general-model" class="section level2">
+<h2>General model</h2>
+<p>We consider a dataset of counts collected at <span class="math inline">\(n\)</span> sites across <span class="math inline">\(p\)</span> years.<br />
+Let <span class="math inline">\(Y_{ij}\)</span> denote the number of individuals recorded at site <span class="math inline">\(i \in \{1,\dots,n\}\)</span> and year <span class="math inline">\(j \in \{1,\dots,p\}\)</span>.<br />
+Each observation is associated with a covariate vector <span class="math inline">\(x_{ij} \in \mathbb{R}^d\)</span>.</p>
+<p>The full covariate matrix <span class="math inline">\(X \in \mathbb{R}^{np \times d}\)</span> typically combines three types of information:</p>
+<ul>
+<li><strong>Site-level covariates</strong> (<span class="math inline">\(R \in \mathbb{R}^{n \times d_1}\)</span>): descriptors constant across years (e.g. habitat type, geographic attributes).<br />
+</li>
+<li><strong>Year-level covariates</strong> (<span class="math inline">\(C \in \mathbb{R}^{p \times d_2}\)</span>): descriptors varying across years but shared across sites (e.g. climate indices, survey effort).<br />
+</li>
+<li><strong>Site–year covariates</strong> (<span class="math inline">\(E \in \mathbb{R}^{np \times d_3}\)</span>): descriptors specific to each site–year combination (e.g. water level, vegetation cover, observer identity).</li>
+</ul>
+<p>These blocks are concatenated into: <span class="math display">\[
+X = [R \otimes \mathbf{1}_p \;\;\; \mathbf{1}_n \otimes C \;\;\; E], 
+\qquad d = d_1 + d_2 + d_3,
+\]</span> so that each observation <span class="math inline">\((i,j)\)</span> is described by a covariate vector <span class="math inline">\(x_{ij}\)</span>.</p>
+<hr />
+<p>The <strong>Zero-Inflated Poisson Log-Normal with Probabilistic PCA (ZI-PLN-PCA)</strong> model generates abundances in two steps:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Presence/absence process</strong> <span class="math display">\[
+U_{ij} \sim \text{Bernoulli}\!\left(\pi_{ij}\right), 
+\qquad \pi_{ij} = \frac{1}{1+\exp(-x_{ij}^\top \gamma)},
+\]</span> where <span class="math inline">\(U_{ij}=0\)</span> deterministically yields <span class="math inline">\(Y_{ij}=0\)</span>.<br />
+The parameter vector <span class="math inline">\(\gamma\)</span> encodes how covariates affect the probability of presence.</p></li>
+<li><p><strong>Abundance process conditional on presence</strong> <span class="math display">\[
+Y_{ij} \;\sim\; \text{Poisson}\!\left(\exp(x_{ij}^\top \beta + Z_{ij})\right),
+\]</span> where <span class="math inline">\(\beta\)</span> controls the covariate effects on abundance, and <span class="math inline">\(Z_{ij}\)</span> is a latent Gaussian effect.</p></li>
+</ol>
+<p>Each site <span class="math inline">\(i\)</span> is associated with a <span class="math inline">\(q\)</span>-dimensional latent vector <span class="math display">\[
+W_i \sim \mathcal{N}(0,I_q), 
+\qquad Z_i = C W_i, \quad C \in \mathbb{R}^{p \times q},
+\]</span> so that the covariance structure of the latent effects is <span class="math display">\[
+\Sigma = C C^\top .
+\]</span></p>
+<p>This <strong>low-rank formulation</strong> parallels probabilistic PCA and parsimoniously captures correlations between years within the same site.</p>
+</div>
+<div id="example" class="section level2">
+<h2>Example</h2>
+<div id="data" class="section level3">
+<h3>Data</h3>
+<p>To illustrate the use of <code>colvR</code>, we rely on the dataset <strong><code>fuligule_milouin</code></strong> provided with the package.<br />
+This dataset contains winter count data of the <strong>Common Pochard (<em>Aythya ferina</em>)</strong>, a Palearctic diving duck species.<br />
+The counts were collected across multiple wetland sites in North Africa over several years, and the dataset is<br />
+characterized by a high proportion of zeros and a substantial amount of missing values — making it a suitable<br />
+case study for the zero-inflated Poisson log-normal framework implemented in <code>colvR</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="kw">data</span>(<span class="st">&quot;fuligule_milouin&quot;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>Y &lt;-<span class="st"> </span>fuligule_milouin<span class="op">$</span>Y ; X &lt;-<span class="st"> </span>fuligule_milouin<span class="op">$</span>X</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>n &lt;-<span class="st"> </span><span class="kw">nrow</span>(Y) ; p &lt;-<span class="st"> </span><span class="kw">ncol</span>(Y) ; d &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a><span class="kw">cat</span>(<span class="kw">mean</span>(<span class="kw">is.na</span>(Y)), <span class="st">&quot;is the proportion of missing entries in Y.</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a><span class="co">#&gt; 0.4443353 is the proportion of missing entries in Y.</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a><span class="kw">cat</span>(<span class="kw">mean</span>(Y <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>), <span class="st">&quot;is the proportion of 0&#39;s in Y.</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a><span class="co">#&gt; 0.6705407 is the proportion of 0&#39;s in Y.</span></span></code></pre></div>
+</div>
+<div id="choosing-the-size-of-the-latent-space" class="section level3">
+<h3>Choosing the size of the latent space</h3>
+<p>An important step in model specification is the choice of the dimension <span class="math inline">\(q\)</span> of the latent space.<br />
+The function <code>select_model_bic()</code> can be used to compare models fitted with different values of <span class="math inline">\(q\)</span>,<br />
+based on the Bayesian Information Criterion (BIC). The selected value corresponds to the latent space<br />
+dimension that maximizes the BIC score.</p>
+<p>We rely on precomputed BIC values (saved in the package) to keep the vignette fast. If you want to recompute them locally, set <code>Sys.setenv(NOT_CRAN = &quot;true&quot;)</code> before knitting.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>q_grid &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span>p</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>use_precomputed &lt;-<span class="st"> </span><span class="op">!</span><span class="kw">identical</span>(<span class="kw">Sys.getenv</span>(<span class="st">&quot;NOT_CRAN&quot;</span>), <span class="st">&quot;true&quot;</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a><span class="cf">if</span> (use_precomputed) {</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>  bics &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;bics_fuligule.rds&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;colvR&quot;</span>))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>} <span class="cf">else</span> {</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>  bics &lt;-<span class="st"> </span><span class="kw">select_model_bic</span>(Y, X, Miss.ZIPLNPCA, q_grid)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a>  <span class="co"># (Optionnel) sauvegarder à nouveau si vous voulez mettre à jour le package :</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>  <span class="co"># saveRDS(bics, file = &quot;inst/extdata/bics_fuligule.rds&quot;, compress = &quot;xz&quot;)</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>}</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a><span class="co"># Selected q (robuste aux noms)</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a>q &lt;-<span class="st"> </span><span class="cf">if</span> (<span class="op">!</span><span class="kw">is.null</span>(<span class="kw">names</span>(bics))) <span class="kw">as.integer</span>(<span class="kw">names</span>(bics)[<span class="kw">which.max</span>(bics)]) <span class="cf">else</span> q_grid[<span class="kw">which.max</span>(bics)]</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>q</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a><span class="co">#&gt; [1] 12</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="kw">plot</span>(q_grid, <span class="kw">as.numeric</span>(bics), <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>     <span class="dt">xlab =</span> <span class="st">&quot;Latent dimension q&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;BIC&quot;</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="co"># (optionnel) surligner q*</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a><span class="kw">points</span>(q, bics[<span class="kw">which.max</span>(bics)], <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">cex =</span> <span class="fl">1.2</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a><span class="kw">abline</span>(<span class="dt">v =</span> q, <span class="dt">lty =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="figure">
+<img src="data:image/png;base64,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" alt="Line plot of BIC versus the latent dimension q for the fuligule_milouin data; the selected q maximizes BIC." />
+<p class="caption">
+Model selection via BIC
+</p>
+</div>
+</div>
+<div id="fit" class="section level3">
+<h3>Fit</h3>
+<p>Once the latent dimension <span class="math inline">\(q\)</span> has been chosen, we can fit the model using<br />
+the function <code>Miss.ZIPLNPCA()</code>. This function estimates the model parameters<br />
+while simultaneously imputing the missing entries in the count matrix <code>Y</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>fit &lt;-<span class="st"> </span><span class="kw">Miss.ZIPLNPCA</span>(Y, X, q)</span></code></pre></div>
+<p>The returned object is a list containing:</p>
+<ul>
+<li>the estimated <strong>parameters</strong> of the model (<code>beta</code>, <code>gamma</code>, <code>C</code>, …),<br />
+</li>
+<li>the <strong>variational parameters</strong> used for inference,<br />
+</li>
+<li>and the <strong>imputed count matrix</strong>, where missing values in <code>Y</code> are replaced by their predictions.</li>
+</ul>
+<p>This fitted object can then be explored to inspect estimated parameters, check convergence,<br />
+and evaluate the quality of imputations.</p>
+</div>
+<div id="confidence-interval" class="section level3">
+<h3>Confidence interval</h3>
+<p>Beyond point estimates, <code>colvR</code> also provides tools to quantify uncertainty in the parameters.<br />
+The function <code>V_theta()</code> computes an estimate of the covariance matrix of the parameters,<br />
+based on the sandwich estimator. Using this, we can derive approximate confidence intervals<br />
+for the regression coefficients of both the presence (<code>γ</code>) and the abundance (<code>β</code>) models.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>cov &lt;-<span class="st"> </span><span class="kw">V_theta</span>(Y, X, fit)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>theta &lt;-<span class="st"> </span><span class="kw">c</span>(fit<span class="op">$</span>mStep<span class="op">$</span>gamma, fit<span class="op">$</span>mStep<span class="op">$</span>beta)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>var &lt;-<span class="st"> </span><span class="kw">diag</span>(cov)[<span class="dv">1</span><span class="op">:</span>(<span class="dv">2</span><span class="op">*</span>d)]</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>Intervals &lt;-<span class="st"> </span><span class="kw">IC</span>(theta, var)</span></code></pre></div>
+<p>We now display the point estimates and 95% confidence intervals for the regression coefficients of the presence model (<span class="math inline">\(\gamma\)</span>) and the abundance model (<span class="math inline">\(\beta\)</span>).</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="co"># Build a compact table of estimates and 95% CIs (no dependency on IC())</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a>se &lt;-<span class="st"> </span><span class="kw">sqrt</span>(var)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a>par_names &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">paste0</span>(<span class="st">&quot;gamma_&quot;</span>, <span class="kw">seq_len</span>(d)), <span class="kw">paste0</span>(<span class="st">&quot;beta_&quot;</span>, <span class="kw">seq_len</span>(d)))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a>ci_tab &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a>  <span class="dt">param =</span> par_names,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a>  <span class="dt">estimate =</span> theta,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a>  <span class="dt">lo =</span> theta <span class="op">-</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>se,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true"></a>  <span class="dt">hi =</span> theta <span class="op">+</span><span class="st"> </span><span class="fl">1.96</span> <span class="op">*</span><span class="st"> </span>se,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true"></a>  <span class="dt">group =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;gamma (presence)&quot;</span>, <span class="st">&quot;beta (abundance)&quot;</span>), <span class="dt">each =</span> d),</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true"></a>  <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true"></a>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true"></a><span class="co"># Order for plotting: gamma first, then beta, top-to-bottom</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true"></a>ci_tab<span class="op">$</span>param_pretty &lt;-<span class="st"> </span><span class="kw">factor</span>(ci_tab<span class="op">$</span>param, <span class="dt">levels =</span> <span class="kw">rev</span>(ci_tab<span class="op">$</span>param))</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true"></a>op &lt;-<span class="st"> </span><span class="kw">par</span>(<span class="dt">mar =</span> <span class="kw">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true"></a><span class="kw">plot</span>(</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true"></a>  <span class="dt">x =</span> ci_tab<span class="op">$</span>estimate, <span class="dt">y =</span> <span class="kw">as.numeric</span>(ci_tab<span class="op">$</span>param_pretty),</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true"></a>  <span class="dt">xlab =</span> <span class="st">&quot;Coefficient (estimate with 95% CI)&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true"></a>  <span class="dt">yaxt =</span> <span class="st">&quot;n&quot;</span>, <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">xaxs =</span> <span class="st">&quot;i&quot;</span>, <span class="dt">col =</span> <span class="kw">ifelse</span>(ci_tab<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;gamma (presence)&quot;</span>, <span class="st">&quot;black&quot;</span>, <span class="st">&quot;gray30&quot;</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true"></a>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true"></a><span class="kw">segments</span>(ci_tab<span class="op">$</span>lo, <span class="kw">as.numeric</span>(ci_tab<span class="op">$</span>param_pretty),</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true"></a>         ci_tab<span class="op">$</span>hi, <span class="kw">as.numeric</span>(ci_tab<span class="op">$</span>param_pretty),</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true"></a>         <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">col =</span> <span class="kw">ifelse</span>(ci_tab<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;gamma (presence)&quot;</span>, <span class="st">&quot;black&quot;</span>, <span class="st">&quot;gray30&quot;</span>))</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true"></a><span class="kw">abline</span>(<span class="dt">v =</span> <span class="dv">0</span>, <span class="dt">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true"></a><span class="kw">axis</span>(<span class="dv">2</span>, <span class="dt">at =</span> <span class="kw">seq_along</span>(<span class="kw">levels</span>(ci_tab<span class="op">$</span>param_pretty)), <span class="dt">labels =</span> <span class="kw">levels</span>(ci_tab<span class="op">$</span>param_pretty), <span class="dt">las =</span> <span class="dv">1</span>)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true"></a><span class="kw">legend</span>(<span class="st">&quot;bottomright&quot;</span>, <span class="dt">inset =</span> <span class="fl">0.01</span>, <span class="dt">bty =</span> <span class="st">&quot;n&quot;</span>,</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true"></a>       <span class="dt">legend =</span> <span class="kw">c</span>(<span class="st">&quot;gamma (presence)&quot;</span>, <span class="st">&quot;beta (abundance)&quot;</span>),</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true"></a>       <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;black&quot;</span>, <span class="st">&quot;gray30&quot;</span>))</span></code></pre></div>
+<div class="figure">
+<img src="data:image/png;base64,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" alt="Horizontal dot-and-whisker plot showing gamma (presence) and beta (abundance) coefficients with their 95% confidence intervals; a vertical line marks zero." />
+<p class="caption">
+Regression coefficients with 95% confidence intervals
+</p>
+</div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="kw">par</span>(op)</span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

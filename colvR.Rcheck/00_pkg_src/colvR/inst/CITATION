@@ -1,0 +1,11 @@
+citHeader("To cite colvR in publications, please use:")
+
+bibentry(
+  bibtype = "Manual",
+  title   = "{colvR}: Zero-inflated Poisson log-normal with latent PCA for for incomplete data",
+  author  = person(given = "Barbara", family = "Bricout"),
+  year    = 2025,
+  note    = "R package version 0.1.0",
+  url     = "https://bbricout.github.io/colvR/"
+)
+
