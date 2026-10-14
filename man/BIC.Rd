@@ -2,39 +2,38 @@
 % Please edit documentation in R/BIC.R
 \name{BIC}
 \alias{BIC}
-\title{BIC from ELBO for a ZIP-PLN latent factor model}
+\title{BIC from the ELBO for PLN-PCA and ZIP-PLN-PCA models}
 \usage{
-BIC(Y, X, fit, q)
+BIC(Y, X, fit, q, model = c("ZIPLNPCA", "PLNPCA"))
 }
 \arguments{
-\item{Y}{Numeric \code{n x p} count matrix.}
+\item{Y}{Numeric \code{n x p} count matrix (NAs allowed).}
 
-\item{X}{Numeric \code{n x d} design matrix of covariates (first column
-typically an intercept).}
+\item{X}{Design matrix, \code{(n*p) x d} (or \code{n x d} for a rowwise
+PLN-PCA design).}
 
-\item{fit}{A fitted object (list) containing at least \code{$elbo}, the
-maximized ELBO value for the model.}
+\item{fit}{Fitted object containing \code{$elbo}
+(output of \code{Miss.ZIPLNPCA} or \code{Miss.PLNPCA}).}
 
-\item{q}{Integer, size of the latent space (rank).}
+\item{q}{Integer, size of the latent space.}
+
+\item{model}{\code{"ZIPLNPCA"} (default) or \code{"PLNPCA"}.}
 }
 \value{
-A single numeric value: the BIC score (higher is better in this
-  ELBO-based convention).
+A single numeric value, the BIC score.
 }
 \description{
-Computes a Bayesian Information Criterion (BIC)-like score from the
-Evidence Lower Bound (ELBO) of a fitted model. The penalty accounts for
-the number of free parameters in a latent factor model with latent
-dimension \code{q}:
-\deqn{ \mathrm{BIC} = \mathrm{ELBO} - \frac{\log(n)}{2}\Big[q\{p - (q-1)/2\} + p\,d\Big], }
-where \eqn{n} is the number of rows (sites/samples), \eqn{p} the number of
-columns (species/variables), and \eqn{d} the number of covariates.
-}
-\details{
-This criterion mirrors the usual BIC structure but replaces the
-log-likelihood with the ELBO and uses the parameter count appropriate
-for a rank-\code{q} latent factor structure.
+Computes a BIC-like score in which the log-likelihood is replaced by the
+ELBO of the fitted model (higher is better):
+\deqn{\mathrm{BIC} = \mathrm{ELBO} - \frac{\log(n)}{2}\Big[q\{p - (q-1)/2\} + k\Big],}
+where \eqn{q\{p - (q-1)/2\}} is the number of free parameters in \eqn{C}
+(identifiable up to a rotation) and \eqn{k} the number of regression
+parameters: \eqn{2d} for the ZIP-PLN-PCA model (\eqn{\beta} and
+\eqn{\gamma}), \eqn{d} for the PLN-PCA model with a vectorized design
+(\eqn{(np) \times d}) and \eqn{pd} with a rowwise design (\eqn{n \times d}).
+\eqn{n} is the number of rows of \code{Y} (sites), which are the
+independent units of the model.
 }
 \seealso{
-\code{\link[stats]{BIC}}
+\code{\link{ICL}}
 }
