@@ -25,12 +25,14 @@ importFrom(Matrix,bdiag)
 importFrom(Rcpp,sourceCpp)
 importFrom(mvtnorm,rmvnorm)
 importFrom(pbapply,pblapply)
-importFrom(stats,glm)
-importFrom(stats,lm)
-importFrom(stats,na.exclude)
-importFrom(stats,plogis)
-importFrom(stats,quantile)
-importFrom(stats,rbinom)
-importFrom(stats,rnorm)
-importFrom(stats,rpois)
+importFrom(stats,
+  glm,
+  lm,
+  na.exclude,
+  plogis,
+  quantile,
+  rbinom,
+  rnorm,
+  rpois
+)
 useDynLib(colvR, .registration = TRUE)

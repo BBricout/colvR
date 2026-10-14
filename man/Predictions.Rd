@@ -4,28 +4,91 @@
 \alias{Predictions}
 \title{Predictive simulations and intervals}
 \usage{
-Predictions(Y, X, fit, MC)
+Predictions(
+  Y,
+  X,
+  fit,
+  MC,
+  type = c("conditional", "marginal"),
+  probs = c(0, 0.9),
+  output = "intervals",
+  cl = NULL
+)
 }
 \arguments{
 \item{Y}{An n x p count matrix (NAs allowed).}
 
 \item{X}{An (n*p) x d design matrix (stacked by blocks of size n).}
 
-\item{fit}{Estimator output list.}
+\item{fit}{Estimator output list (from \code{Miss.ZIPLNPCA}).}
 
 \item{MC}{Integer, number of Monte Carlo draws.}
+
+\item{type}{\code{"conditional"} (default) or \code{"marginal"}.
+\describe{
+  \item{conditional}{for each parameter draw, a VE step gives
+    \eqn{M}, \eqn{S} and \eqn{\xi}; then
+    \eqn{U \sim \mathcal{B}(\xi)} and
+    \eqn{Z_i \sim \mathcal{N}(X\beta + M_i C^\top, C\,\mathrm{diag}(S_i)\,C^\top)}.}
+  \item{marginal}{no VE step;
+    \eqn{U \sim \mathcal{B}(\mathrm{logit}^{-1}(X\gamma))} and
+    \eqn{Z_i \sim \mathcal{N}(X\beta, C C^\top)}.}
+}
+In both cases \eqn{U = 1} means presence and the prediction is
+\eqn{U \times \mathcal{P}(\exp(Z))}.}
+
+\item{probs}{Numeric vector of length 2, the lower and upper quantile
+levels of the interval. Default \code{c(0, 0.9)}.}
+
+\item{output}{Character vector, what to return besides the intervals.
+One or several of \code{"intervals"} (always returned), \code{"draws"},
+\code{"latent"}, \code{"params"}, or \code{"all"}.}
+
+\item{cl}{Parallelisation of the VE steps (conditional type only), passed to
+\code{\link[pbapply]{pblapply}}. \code{NULL} (default): sequential.
+An integer: number of forked processes (not available on Windows).
+A cluster from \code{\link[parallel]{makeCluster}}: works on all platforms.
+All random draws are made in the main process, so results for a given
+seed do not depend on \code{cl}.}
 }
 \value{
 A list with elements:
 \itemize{
-  \item \code{Z}, \code{U}, \code{Y.hat}, \code{pred}: MC samples
-  \item \code{xi}: VE xi matrices for each draw
-  \item \code{lower}, \code{upper}: 2.5\% and 97.5\% predictive quantiles
-  \item \code{level}: average empirical coverage of \code{[lower, upper]}
+  \item \code{lower}, \code{upper}: n x p matrices of predictive quantiles
+    at levels \code{probs}.
+  \item \code{draws} (if requested): list with \code{count} (Poisson draws)
+    and \code{presence} (Bernoulli draws \eqn{U}), arrays n x p x MC.
+    The prediction is \code{count * presence}.
+  \item \code{latent} (if requested): list with \code{Z}, array n x p x MC
+    of Gaussian latent draws, and for the conditional type \code{M},
+    \code{S} (arrays n x q x MC) and \code{xi} (array n x p x MC)
+    from the VE steps.
+  \item \code{params} (if requested): list with \code{gamma}, \code{beta}
+    (matrices MC x d) and \code{C} (matrix MC x (p*q), column-major
+    vectorisation of C).
+  \item \code{settings}: list with \code{type}, \code{probs} and \code{MC}.
 }
 }
 \description{
-Draws parameter samples using the sandwich variance \code{V_theta}, runs VE
-updates, and simulates predictive counts with zero-inflation. Returns
-per-cell prediction intervals and coverage.
+Draws parameter samples using the sandwich variance \code{V_theta}, simulates
+predictive counts with zero-inflation and returns per-cell prediction
+intervals. Two types of intervals are available: conditional (latent
+variables drawn from their variational posterior, after one VE step per
+draw) and marginal (latent variables drawn from their prior).
+}
+\examples{
+\dontrun{
+pi_cond <- Predictions(Y, X, fit, MC = 100)
+pi_marg <- Predictions(Y, X, fit, MC = 100, type = "marginal",
+                       probs = c(0.05, 0.95))
+
+# Parallel VE steps on a server
+cl <- parallel::makeCluster(8)
+res <- Predictions(Y, X, fit, MC = 1000, output = "all", cl = cl)
+parallel::stopCluster(cl)
+}
+
+}
+\seealso{
+\code{\link{V_theta}}, \code{\link{Miss.ZIPLNPCA_VE}}
 }
