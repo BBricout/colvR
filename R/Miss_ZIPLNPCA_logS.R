@@ -31,9 +31,11 @@
 #'     (\code{n x p}).}
 #'   \item{\code{pred}}{List with predictors and expected counts:
 #'     \code{mu} (\code{n x p}), \code{nu} (\code{n x p}), backend Poisson mean
-#'     \code{A} (\code{n x p}), and \code{predicted} recomputed in R:
-#'     \deqn{\exp\!\big( X B + M C^\top + 0.5\,(S\odot S)\,(C\odot C)^\top \big).}}
-#'   \item{\code{imputed}}{\code{n x p} matrix equal to \code{xi * A} at missing
+#'     \code{A} (\code{n x p}), and
+#'     \code{predicted} (\code{n x p}, ZIP expectation for all entries:
+#'     \eqn{\xi \odot A}, with \eqn{A = \exp( XB + M C^\top + 0.5\, S\, (C\odot C)^\top )},
+#'     \code{S} being the variational variances).}
+#'   \item{\code{imputed}}{\code{n x p} matrix equal to \code{predicted} at missing
 #'     entries of \code{Y}, and \code{Y} elsewhere.}
 #'   \item{\code{iter}}{Number of iterations; \code{elboPath} (trajectory of ELBO);
 #'     \code{elbo} (final ELBO).}
@@ -70,17 +72,17 @@
 
 
 Miss.ZIPLNPCA.logS <- function(Y, # Table de comptages n*p qui peut contenir des données manquantes
-                             X, # Covariables np*d dont une colonne de 1 pour l'intercept
-                             q, # Dimension de l'espace latent q
-                             params = NULL, # Paramètres fourni en entrée
-                             config = NULL,
-                             tolxi = NULL, 
-                             tolLogS = NULL){
-
+                               X, # Covariables np*d dont une colonne de 1 pour l'intercept
+                               q, # Dimension de l'espace latent q
+                               params = NULL, # Paramètres fourni en entrée
+                               config = NULL,
+                               tolxi = NULL, 
+                               tolLogS = NULL){
+  
   n <- nrow(Y)
   p <- ncol(Y)
   d <- ncol(X)
-
+  
   if (is.null(params)){params <- Init_ZIP(Y, X, q)}
   if (is.null(config)){config <- PLNPCA_param()$config_optim}
   if (is.null(tolxi)){tolxi <- 1e-04}
@@ -88,25 +90,25 @@ Miss.ZIPLNPCA.logS <- function(Y, # Table de comptages n*p qui peut contenir des
   
   uBound <- c(rep(Inf, (2*d)+(p*q)+(n*q)), rep(tolLogS, n*q))
   config$upper_bounds <- uBound
-
+  
   R <- ifelse(is.na(Y), 0, 1) # Masque qui met des 0 à la place des données manquantes
-
+  
   Y.na <- ifelse(R == 0, 0, Y)
-
+  
   data <- list(Y = Y.na,
                R = R,
                X = X)
-
+  
   params$logS <- log(params$S)
-
+  
   out <- nlopt_optimize_ZIP_logS(data, params, config, tolxi)
-
+  
   mu <- VectorToMatrix(X%*%out$B, n, p)
   nu <- VectorToMatrix(X%*%out$D, n, p)
-
+  
   mStep <- list(gamma = out$D, beta = out$B, C = out$C)
   eStep <- list(M = out$M, S = out$S,  xi = out$xi)
-
+  
   B.hat <- mStep$beta
   D.hat <- mStep$gamma
   C.hat <- mStep$C
@@ -114,19 +116,19 @@ Miss.ZIPLNPCA.logS <- function(Y, # Table de comptages n*p qui peut contenir des
   S.hat <- eStep$S
   XB.hat <- VectorToMatrix(X %*% B.hat, n, p)
   XD.hat <- VectorToMatrix(X %*% D.hat, n, p)
-
-  predicted <- exp(XB.hat + M.hat %*% t(C.hat) + 0.5 * (S.hat*S.hat) %*% t(C.hat * C.hat))
-
-
+  
+  predicted <- out$xi * out$A
+  
+  
   pred <- list(A = out$A, nu = nu, mu = mu, predicted = predicted)
   iter <- out$monitoring$iterations
   elboPath <- out$objective_values
   # elbo <- out$objective_values[length(out$objective_values)]
   elbo <- out$objective
   
-  imputed <- ifelse(is.na(Y), out$xi*out$A, Y)
+  imputed <- ifelse(is.na(Y), predicted, Y)
   grad <- Elbo_grad(data, params, tolxi)
-
+  
   res <- list(mStep = mStep,
               eStep = eStep,
               pred = pred,
@@ -141,8 +143,8 @@ Miss.ZIPLNPCA.logS <- function(Y, # Table de comptages n*p qui peut contenir des
               gradC = grad$gradC,
               gradM = grad$gradM, 
               gradS = grad$gradS
-                )
-
+  )
+  
   return(res)
-
+  
 }

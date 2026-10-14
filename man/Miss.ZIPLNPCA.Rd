@@ -40,10 +40,10 @@ A list with components:
     \code{mu} (\code{n x p}, abundance mean),
     \code{nu} (\code{n x p}, zero‑inflation mean),
     \code{A} (\code{n x p}, PLN expectation),
-    \code{predicted} (\code{n x p}, predicted values).
-    For \code{q = 0}, \code{predicted = exp(XB)}; for \code{q > 0},
-    \deqn{ \mathrm{predicted} = \exp\!\big( XB + M C^\top + 0.5\,(S\odot S)\,(C\odot C)^\top \big). }}
-  \item{\code{imputed}}{\code{n x p} matrix equal to \code{xi * A} at
+    \code{predicted} (\code{n x p}, ZIP expectation for all entries:
+    \eqn{\xi \odot A}, with \eqn{A = \exp( XB + M C^\top + 0.5\, S\, (C\odot C)^\top )},
+    \code{S} being the variational variances).}
+  \item{\code{imputed}}{\code{n x p} matrix equal to \code{predicted} at
     missing entries of \code{Y}, and \code{Y} elsewhere (ZIP expectation).}
   \item{\code{iter}}{Integer, number of iterations.}
   \item{\code{elboPath}}{Numeric vector of objective (ELBO) values over iterations.}

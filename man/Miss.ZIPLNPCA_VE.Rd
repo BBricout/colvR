@@ -39,7 +39,10 @@ A list with components:
     \code{S} (\code{n x q}), \code{xi} (\code{n x p}).}
   \item{\code{pred}}{List with predictors and expected counts:
     \code{mu} (\code{n x p}), \code{nu} (\code{n x p}), backend mean \code{A} (\code{n x p}),
-    and \code{predicted} recomputed in R.}
+    and
+    \code{predicted} (\code{n x p}, ZIP expectation for all entries:
+    \eqn{\xi \odot A}, with \eqn{A = \exp( XB + M C^\top + 0.5\, S\, (C\odot C)^\top )},
+    \code{S} being the variational variances).}
   \item{\code{elbo}}{Final ELBO value.}
   \item{\code{params.init}}{Initial parameters used.}
   \item{\code{monitoring}}{Backend diagnostics (if provided).}

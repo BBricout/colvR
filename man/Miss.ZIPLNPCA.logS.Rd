@@ -46,9 +46,11 @@ A list with components:
     (\code{n x p}).}
   \item{\code{pred}}{List with predictors and expected counts:
     \code{mu} (\code{n x p}), \code{nu} (\code{n x p}), backend Poisson mean
-    \code{A} (\code{n x p}), and \code{predicted} recomputed in R:
-    \deqn{\exp\!\big( X B + M C^\top + 0.5\,(S\odot S)\,(C\odot C)^\top \big).}}
-  \item{\code{imputed}}{\code{n x p} matrix equal to \code{xi * A} at missing
+    \code{A} (\code{n x p}), and
+    \code{predicted} (\code{n x p}, ZIP expectation for all entries:
+    \eqn{\xi \odot A}, with \eqn{A = \exp( XB + M C^\top + 0.5\, S\, (C\odot C)^\top )},
+    \code{S} being the variational variances).}
+  \item{\code{imputed}}{\code{n x p} matrix equal to \code{predicted} at missing
     entries of \code{Y}, and \code{Y} elsewhere.}
   \item{\code{iter}}{Number of iterations; \code{elboPath} (trajectory of ELBO);
     \code{elbo} (final ELBO).}

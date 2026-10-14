@@ -31,7 +31,10 @@
 #'     \code{S} (\code{n x q}), \code{xi} (\code{n x p}).}
 #'   \item{\code{pred}}{List with predictors and expected counts:
 #'     \code{mu} (\code{n x p}), \code{nu} (\code{n x p}), backend mean \code{A} (\code{n x p}),
-#'     and \code{predicted} recomputed in R.}
+#'     and
+#'     \code{predicted} (\code{n x p}, ZIP expectation for all entries:
+#'     \eqn{\xi \odot A}, with \eqn{A = \exp( XB + M C^\top + 0.5\, S\, (C\odot C)^\top )},
+#'     \code{S} being the variational variances).}
 #'   \item{\code{elbo}}{Final ELBO value.}
 #'   \item{\code{params.init}}{Initial parameters used.}
 #'   \item{\code{monitoring}}{Backend diagnostics (if provided).}
@@ -72,11 +75,11 @@
 
 
 Miss.ZIPLNPCA_VE <- function(Y, # Matrice de comptage 
-                              X, # Covariables
-                              q, # Dimension de l'espace latent
-                              params = NULL, # Paramètres fourni en entrée
-                              config_vem = NULL, # (maxiter, tolS, tolxi, ftol, xtol) 
-                              config = NULL){ # Configuration pour les étapes
+                             X, # Covariables
+                             q, # Dimension de l'espace latent
+                             params = NULL, # Paramètres fourni en entrée
+                             config_vem = NULL, # (maxiter, tolS, tolxi, ftol, xtol) 
+                             config = NULL){ # Configuration pour les étapes
   ## Dimensions
   n <- nrow(Y)
   p <- ncol(Y)
@@ -141,7 +144,7 @@ Miss.ZIPLNPCA_VE <- function(Y, # Matrice de comptage
   XB.hat <- VectorToMatrix(X %*% B.hat, n, p)
   XD.hat <- VectorToMatrix(X %*% D.hat, n, p)
   
-  predicted <- exp(XB.hat + M.hat %*% t(C.hat) + 0.5 * (S.hat) %*% t(C.hat * C.hat))
+  predicted <- out$xi * out$A
   elbo1 <- out$elbo1 ; elbo2 <- out$elbo2 ; elbo3 <- out$elbo3
   elbo4 <- out$elbo4 ; elbo5 <- out$elbo5
   

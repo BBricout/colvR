@@ -38,8 +38,11 @@
 #'     \code{S} (\code{n x q}), logistic bound parameters \code{xi} (\code{n x p}).}
 #'   \item{\code{pred}}{List with predictors and expected counts:
 #'     \code{mu} (\code{n x p}), \code{nu} (\code{n x p}), backend mean \code{A} (\code{n x p}),
-#'     and \code{predicted} recomputed in R.}
-#'   \item{\code{imputed}}{\code{n x p} matrix equal to \code{xi * A} at missing entries of \code{Y},
+#'     and
+#'     \code{predicted} (\code{n x p}, ZIP expectation for all entries:
+#'     \eqn{\xi \odot A}, with \eqn{A = \exp( XB + M C^\top + 0.5\, S\, (C\odot C)^\top )},
+#'     \code{S} being the variational variances).}
+#'   \item{\code{imputed}}{\code{n x p} matrix equal to \code{predicted} at missing entries of \code{Y},
 #'     and \code{Y} elsewhere.}
 #'   \item{\code{iter}}{Number of outer iterations performed.}
 #'   \item{\code{elboPath}}{Numeric vector of ELBO values across outer iterations.}
@@ -90,7 +93,7 @@ Miss.ZIPLNPCA_Steps <- function(Y, X, q, params = NULL, config_vem = NULL, confi
   n <- nrow(Y)
   p <- ncol(Y)
   d <- ncol(X)
- 
+  
   
   if (is.null(config_vem)) {
     config_vem <- list(maxiter = 1e06, ftol = 1e-10, xtol = 1e-10,
@@ -175,10 +178,9 @@ Miss.ZIPLNPCA_Steps <- function(Y, X, q, params = NULL, config_vem = NULL, confi
   
   mu <- VectorToMatrix(X %*% out_opt$B, n, p)
   nu <- VectorToMatrix(X %*% out_opt$D, n, p)
-  predicted <- exp(mu + out_opt$M %*% t(out_opt$C) + 
-                     0.5 * out_opt$S %*% t(out_opt$C^2))
+  predicted <- out_opt$xi * out_opt$A
   
-  imputed <- ifelse(is.na(Y), out_opt$xi*out_opt$A, Y)
+  imputed <- ifelse(is.na(Y), predicted, Y)
   params <- list(B = out_opt$B, D = out_opt$D, C = out_opt$C, 
                  M = out_opt$M, S = out_opt$S)
   grad <- Elbo_grad(data, params, config_vem$tolxi)

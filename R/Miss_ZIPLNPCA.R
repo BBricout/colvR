@@ -35,10 +35,10 @@
 #'     \code{mu} (\code{n x p}, abundance mean),
 #'     \code{nu} (\code{n x p}, zero‑inflation mean),
 #'     \code{A} (\code{n x p}, PLN expectation),
-#'     \code{predicted} (\code{n x p}, predicted values).
-#'     For \code{q = 0}, \code{predicted = exp(XB)}; for \code{q > 0},
-#'     \deqn{ \mathrm{predicted} = \exp\!\big( XB + M C^\top + 0.5\,(S\odot S)\,(C\odot C)^\top \big). }}
-#'   \item{\code{imputed}}{\code{n x p} matrix equal to \code{xi * A} at
+#'     \code{predicted} (\code{n x p}, ZIP expectation for all entries:
+#'     \eqn{\xi \odot A}, with \eqn{A = \exp( XB + M C^\top + 0.5\, S\, (C\odot C)^\top )},
+#'     \code{S} being the variational variances).}
+#'   \item{\code{imputed}}{\code{n x p} matrix equal to \code{predicted} at
 #'     missing entries of \code{Y}, and \code{Y} elsewhere (ZIP expectation).}
 #'   \item{\code{iter}}{Integer, number of iterations.}
 #'   \item{\code{elboPath}}{Numeric vector of objective (ELBO) values over iterations.}
@@ -85,13 +85,13 @@
 
 
 Miss.ZIPLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des données manquantes
-                        X, # Covariables np*d dont une colonne de 1 pour l'intercept
-                        q, # Dimension de l'espace latent q
-                        params = NULL, # Paramètres fourni en entrée
-                        config = NULL,
-                        tolS = NULL,
-                        tolxi = NULL){
-
+                          X, # Covariables np*d dont une colonne de 1 pour l'intercept
+                          q, # Dimension de l'espace latent q
+                          params = NULL, # Paramètres fourni en entrée
+                          config = NULL,
+                          tolS = NULL,
+                          tolxi = NULL){
+  
   n <- nrow(Y)
   p <- ncol(Y)
   d <- ncol(X)
@@ -133,7 +133,6 @@ Miss.ZIPLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des donn
     XB.hat <- VectorToMatrix(X %*% B.hat, n, p)
     XD.hat <- VectorToMatrix(X %*% D.hat, n, p)
     
-    predicted <- exp(XB.hat)
     elbo1 <- out$elbo1 ; elbo2 <- 0 ; elbo3 <- out$elbo3
     elbo4 <- out$elbo4 ; elbo5 <- 0
   }
@@ -156,7 +155,6 @@ Miss.ZIPLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des donn
     XB.hat <- VectorToMatrix(X %*% B.hat, n, p)
     XD.hat <- VectorToMatrix(X %*% D.hat, n, p)
     
-    predicted <- exp(XB.hat + M.hat %*% t(C.hat) + 0.5 * (S.hat*S.hat) %*% t(C.hat * C.hat))
     elbo1 <- out$elbo1 ; elbo2 <- out$elbo2 ; elbo3 <- out$elbo3
     elbo4 <- out$elbo4 ; elbo5 <- out$elbo5
   }
@@ -164,15 +162,16 @@ Miss.ZIPLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des donn
   params <- list(B = out$B, D = out$D, C = out$C, M = out$M, S = out$S)
   
   grad <- Elbo_grad(data, params, tolxi)
-
+  
+  predicted <- out$xi * out$A
   pred <- list(A = out$A, nu = nu, mu = mu, predicted = predicted)
   iter <- out$monitoring$iterations
   elboPath <- out$objective_values
   # elbo <- out$objective_values[length(out$objective_values)]
   elbo <- out$objective
-  imputed <- ifelse(is.na(Y), out$xi*out$A, Y)
-
-
+  imputed <- ifelse(is.na(Y), predicted, Y)
+  
+  
   res <- list(mStep = mStep,
               eStep = eStep,
               imputed = imputed,
@@ -187,8 +186,8 @@ Miss.ZIPLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des donn
               gradC = grad$gradC,
               gradM = grad$gradM, 
               gradS = grad$gradS
-                )
-
+  )
+  
   return(res)
-
+  
 }
