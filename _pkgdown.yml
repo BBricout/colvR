@@ -82,7 +82,7 @@ reference:
   - title: "Data"
     desc: "Datasets bundled with colvR."
     contents:
-      - fuligule_milouin
+      - waterbird
 
 
 articles:

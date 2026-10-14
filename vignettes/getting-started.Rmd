@@ -82,18 +82,15 @@ This **low-rank formulation** parallels probabilistic PCA and parsimoniously cap
 
 ### Data
 
-To illustrate the use of `colvR`, we rely on the dataset **`fuligule_milouin`** provided with the package.  
-This dataset contains winter count data of the **Common Pochard (*Aythya ferina*)**, a Palearctic diving duck species.  
-The counts were collected across multiple wetland sites in North Africa over several years, and the dataset is  
-characterized by a high proportion of zeros and a substantial amount of missing values — making it a suitable  
-case study for the zero-inflated Poisson log-normal framework implemented in `colvR`. 
+To illustrate the use of `colvR`, we rely on the dataset **`waterbird`** provided with the package.  
+It contains counts of a waterbird species from a monitoring program covering several sites over several years. The data are incomplete: many site-year combinations were not surveyed. Together with a high proportion of zeros, this substantial amount of missing values makes the dataset a suitable case study for the zero-inflated Poisson log-normal framework implemented in `colvR`. Sites and years are anonymized.
 
 
 
 ```{r example}
 
-data("fuligule_milouin")
-Y <- fuligule_milouin$Y ; X <- fuligule_milouin$X
+data("waterbird")
+Y <- waterbird$Y ; X <- waterbird$X
 n <- nrow(Y) ; p <- ncol(Y) ; d <- ncol(X)
 
 cat(mean(is.na(Y)), "is the proportion of missing entries in Y.\n")
@@ -130,7 +127,7 @@ q <- if (!is.null(names(bics))) as.integer(names(bics)[which.max(bics)]) else q_
 q
 ```
 
-```{r bics_plot, fig.cap="Model selection via BIC", fig.alt="Line plot of BIC versus the latent dimension q for the fuligule_milouin data; the selected q maximizes BIC."}
+```{r bics_plot, fig.cap="Model selection via BIC", fig.alt="Line plot of BIC versus the latent dimension q for the waterbird data; the selected q maximizes BIC."}
 plot(q_grid, as.numeric(bics), type = "b",
      xlab = "Latent dimension q", ylab = "BIC")
 # (optionnel) surligner q*
