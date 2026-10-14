@@ -33,6 +33,10 @@
 #'   A cluster from \code{\link[parallel]{makeCluster}}: works on all platforms.
 #'   All random draws are made in the main process, so results for a given
 #'   seed do not depend on \code{cl}.
+#' @param verbose Logical. If \code{TRUE} (default), prints the current step
+#'   and shows progress bars for the VE steps and the simulation of the
+#'   latent variables. Progress bars can also be controlled globally with
+#'   \code{\link[pbapply]{pboptions}}.
 #'
 #' @return A list with elements:
 #' \itemize{
@@ -65,16 +69,17 @@
 #'
 #' @seealso \code{\link{V_theta}}, \code{\link{Miss.ZIPLNPCA_VE}}
 #' @importFrom mvtnorm rmvnorm
-#' @importFrom pbapply pblapply
+#' @importFrom pbapply pblapply pboptions
 #' @importFrom stats rbinom rpois plogis quantile
 #' @export
 Predictions <- function(Y, X, fit, MC,
                         type   = c("conditional", "marginal"),
                         probs  = c(0, 0.9),
                         output = "intervals",
-                        cl     = NULL){
+                        cl     = NULL,
+                        verbose = TRUE){
   
-  ## Vérification des options
+  ## Check arguments
   type <- match.arg(type)
   output <- match.arg(output,
                       c("intervals", "draws", "latent", "params", "all"),
@@ -83,22 +88,30 @@ Predictions <- function(Y, X, fit, MC,
   
   if (!is.numeric(probs) || length(probs) != 2 || anyNA(probs) ||
       any(probs < 0 | probs > 1) || probs[1] > probs[2])
-    stop("'probs' doit contenir deux niveaux entre 0 et 1, le premier inférieur au second.")
+    stop("'probs' must contain two levels between 0 and 1, the first lower than the second.")
   
   if (is.numeric(cl) && cl > 1 && .Platform$OS.type == "windows")
-    stop("Sous Windows, 'cl' ne peut pas être un nombre de cœurs. ",
-         "Utiliser un cluster : cl <- parallel::makeCluster(4).")
+    stop("On Windows, 'cl' cannot be a number of cores. ",
+         "Use a cluster instead: cl <- parallel::makeCluster(4).")
   
-  ## Paramètres
+  ## Progress display
+  if (!verbose) {
+    op <- pboptions(type = "none")
+    on.exit(pboptions(op), add = TRUE)
+  }
+  step <- function(msg) if (verbose) message(msg)
+  
+  ## Parameters
   n <- nrow(Y) ; p <- ncol(Y) ; d <- ncol(X)
   B.hat <- fit$mStep$beta ; D.hat <- fit$mStep$gamma ; C.hat <- fit$mStep$C
   q <- ncol(C.hat)
   M.hat <- fit$eStep$M ; S.hat <- fit$eStep$S
   
-  ## Variance sandwich
+  ## Sandwich variance
+  step("Computing the sandwich variance...")
   Var <- as.matrix(V_theta(Y, X, fit))
   
-  ## Tirages de paramètres
+  ## Parameter draws
   theta.hat <- c(as.vector(D.hat), as.vector(B.hat), as.vector(C.hat))
   theta.sample <- lapply(1:MC, function(m)
     rmvnorm(1, theta.hat, Var))
@@ -118,11 +131,12 @@ Predictions <- function(Y, X, fit, MC,
     params.sample <- lapply(1:MC, function(m)
       list(B = matrix(beta.sample[[m]]), D = matrix(gamma.sample[[m]]), C = C.sample[[m]], M = M.hat, S = S.hat))
     
-    ## Etapes VE (seule partie parallélisée, sans tirage aléatoire)
+    ## VE steps (only parallelised part, no random draws)
     config_VE <- list(algorithm = "MMA", backend = "nlopt", maxeval = 1000,
                       ftol_abs = 1e-8, xtol_abs = 1e-4, maxtime = -1, trace = 0,
                       ftol_rel = 1e-15, xtol_rel = 1e-15)
     
+    step(sprintf("Running %d VE steps:", MC))
     VE.sample <- pblapply(1:MC, function(m)
       Miss.ZIPLNPCA_VE(Y, X, q, params = params.sample[[m]], config = config_VE),
       cl = cl)
@@ -141,7 +155,8 @@ Predictions <- function(Y, X, fit, MC,
         C.sample[[m]] %*% diag(VE.sample[[m]]$eStep$S[i,], nrow = q) %*% t(C.sample[[m]]))
     })
     
-    Z <- lapply(1:MC, function(m){do.call(rbind, lapply(1:n, function(i){rmvnorm(1, mu[[m]][i,], sigma[[m]][[i]])}))})
+    step("Simulating the latent variables:")
+    Z <- pblapply(1:MC, function(m){do.call(rbind, lapply(1:n, function(i){rmvnorm(1, mu[[m]][i,], sigma[[m]][[i]])}))})
     
   } else {
     
@@ -156,11 +171,13 @@ Predictions <- function(Y, X, fit, MC,
     sigma <- lapply(1:MC, function(m)
       C.sample[[m]]%*%t(C.sample[[m]]))
     
-    Z <- lapply(1:MC, function(m){do.call(rbind, lapply(1:n, function(i){rmvnorm(1, mu.sample[[m]][i,], sigma[[m]])}))})
+    step("Simulating the latent variables:")
+    Z <- pblapply(1:MC, function(m){do.call(rbind, lapply(1:n, function(i){rmvnorm(1, mu.sample[[m]][i,], sigma[[m]])}))})
     
   }
   
-  ## Simulation des comptages
+  ## Count simulation
+  step("Simulating the counts and computing the intervals...")
   Z_clipped <- lapply(Z, function(z) pmin(z, 700))
   
   Y.hat <- lapply(1:MC, function(m)
@@ -171,13 +188,13 @@ Predictions <- function(Y, X, fit, MC,
   
   Y_sim_arr <- simplify2array(pred)
   
-  ## Intervalles
+  ## Intervals
   Y_pred_lower <- apply(Y_sim_arr, c(1, 2), function(x) quantile(x, probs[1], names = FALSE))
   Y_pred_upper <- apply(Y_sim_arr, c(1, 2), function(x) quantile(x, probs[2], names = FALSE))
   
   res <- list(lower = Y_pred_lower, upper = Y_pred_upper)
   
-  ## Sorties optionnelles
+  ## Optional outputs
   if ("draws" %in% output){
     res$draws <- list(count    = simplify2array(Y.hat),
                       presence = simplify2array(U))

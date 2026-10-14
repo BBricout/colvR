@@ -31,11 +31,11 @@ BIC <- function(Y, X, fit, q, model = c("ZIPLNPCA", "PLNPCA")){
   d <- ncol(X)
   elbo <- fit$elbo
   
-  ## Nombre de paramètres de régression
+  ## Number of regression parameters
   if (model == "ZIPLNPCA"){
-    k <- 2*d                                    # beta et gamma
+    k <- 2*d                                    # beta and gamma
   } else {
-    k <- if (nrow(X) == n*p) d else p*d         # design vectorisé ou rowwise
+    k <- if (nrow(X) == n*p) d else p*d         # vectorized or rowwise design
   }
   
   BIC <- elbo - (q*(p - (q-1)/2) + k)*log(n)/2
@@ -72,7 +72,7 @@ ICL <- function(Y, X, fit, q, model = c("ZIPLNPCA", "PLNPCA")){
   
   n <- nrow(Y)
   
-  ## Entropie de W (gaussienne)
+  ## Entropy of W (Gaussian)
   if (q == 0){
     H_W <- 0
   } else {
@@ -80,7 +80,7 @@ ICL <- function(Y, X, fit, q, model = c("ZIPLNPCA", "PLNPCA")){
     H_W <- 0.5*sum(log(var_W)) + n*q/2*(1 + log(2*pi))
   }
   
-  ## Entropie de U (Bernoulli), modèle ZIP uniquement
+  ## Entropy of U (Bernoulli), ZIP model only
   if (model == "ZIPLNPCA"){
     xi <- fit$eStep$xi
     H_U <- -sum(xi*log(xi) + (1 - xi)*log(1 - xi), na.rm = TRUE)  # 0 log 0 = 0

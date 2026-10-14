@@ -12,7 +12,8 @@ Predictions(
   type = c("conditional", "marginal"),
   probs = c(0, 0.9),
   output = "intervals",
-  cl = NULL
+  cl = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -50,6 +51,11 @@ An integer: number of forked processes (not available on Windows).
 A cluster from \code{\link[parallel]{makeCluster}}: works on all platforms.
 All random draws are made in the main process, so results for a given
 seed do not depend on \code{cl}.}
+
+\item{verbose}{Logical. If \code{TRUE} (default), prints the current step
+and shows progress bars for the VE steps and the simulation of the
+latent variables. Progress bars can also be controlled globally with
+\code{\link[pbapply]{pboptions}}.}
 }
 \value{
 A list with elements:

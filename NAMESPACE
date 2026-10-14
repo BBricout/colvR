@@ -24,7 +24,10 @@ import(PLNmodels)
 importFrom(Matrix,bdiag)
 importFrom(Rcpp,sourceCpp)
 importFrom(mvtnorm,rmvnorm)
-importFrom(pbapply,pblapply)
+importFrom(pbapply,
+  pblapply,
+  pboptions
+)
 importFrom(stats,
   glm,
   lm,
