@@ -2,30 +2,64 @@
 % Please edit documentation in R/select_model_bic.R
 \name{select_model_bic}
 \alias{select_model_bic}
-\title{Model selection by BIC over candidate latent dimensions}
+\title{Model selection over candidate latent dimensions (BIC or ICL)}
 \usage{
-select_model_bic(Y, X, fun, latents)
+select_model_bic(
+  Y,
+  X,
+  fun,
+  latents,
+  model = c("ZIPLNPCA", "PLNPCA"),
+  criterion = c("BIC", "ICL")
+)
 }
 \arguments{
-\item{Y}{Response matrix (n x p).}
+\item{Y}{Numeric \code{n x p} count matrix (NAs allowed).}
 
-\item{X}{Covariate matrix (n x d).}
+\item{X}{Design matrix, \code{(n*p) x d}.}
 
-\item{fun}{Fitting function called as \code{fun(Y, X, q)} that returns a fit object.}
+\item{fun}{Fitting function, called as \code{fun(Y = Y, X = X, q = q)}
+(e.g. \code{Miss.ZIPLNPCA} or \code{Miss.PLNPCA}).}
 
-\item{latents}{Integer/numeric vector of candidate latent dimensions.}
+\item{latents}{Integer vector of candidate latent dimensions.}
+
+\item{model}{\code{"ZIPLNPCA"} (default) or \code{"PLNPCA"}; must match
+\code{fun}. Passed to \code{\link{BIC}} and \code{\link{ICL}}.}
+
+\item{criterion}{\code{"BIC"} (default) or \code{"ICL"}.}
 }
 \value{
-A numeric vector of BIC values, one per element of \code{latents},
-in the same order as \code{latents}.
+A list with elements:
+\itemize{
+  \item \code{criterion}: the criterion used.
+  \item \code{values}: numeric vector of criterion values, named by
+    \code{latents}.
+  \item \code{q_star}: the latent dimension maximizing the criterion.
+  \item \code{fit_star}: the fit obtained with \code{q_star}.
+}
 }
 \description{
-For each value in \code{latents}, fits a model via \code{fun(Y, X, q)}
-and computes the corresponding BIC. Returns the vector of BIC values
-in the same order as \code{latents}.
+For each value in \code{latents}, fits a model with \code{fun} and computes
+the chosen criterion (\code{\link{BIC}} or \code{\link{ICL}}). Returns the
+criterion values, the latent dimension that maximizes the criterion and the
+corresponding fit.
 }
 \details{
-A progress bar is displayed via \pkg{pbapply}. The \code{BIC}
-function used must be available in your namespace (e.g., \code{colvR::BIC}
-if you define one, or \code{stats::BIC} if you call it explicitly).
+A progress bar is displayed via \pkg{pbapply}. The function checks
+that \code{model} matches the fits returned by \code{fun}: a ZIP-PLN-PCA fit
+contains \code{mStep$gamma}, a PLN-PCA fit does not.
+}
+\examples{
+\dontrun{
+sel <- select_model_bic(Y, X, Miss.ZIPLNPCA, latents = 1:5)
+sel$q_star
+plot(1:5, sel$values, type = "b", xlab = "q", ylab = "BIC")
+
+sel_icl <- select_model_bic(Y, X, Miss.ZIPLNPCA, latents = 1:5, criterion = "ICL")
+fit <- sel_icl$fit_star
+}
+
+}
+\seealso{
+\code{\link{BIC}}, \code{\link{ICL}}
 }
