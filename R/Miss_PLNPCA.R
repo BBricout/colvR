@@ -76,9 +76,9 @@
 
 Miss.PLNPCA <- function(Y, # Table de comptages n*p qui peut contenir des données manquantes
                          X, # Covariables np*d dont une colonne de 1 pour l'intercept
+                         q, # Dimension de l'espace latent q
                          O = NULL, # Offsets
                          w = NULL, # Poids
-                         q, # Dimension de l'espace latent q
                          params = NULL, # Paramètres fourni en entrée
                          config = NULL){ # Paramètres pour l'optimisation
 

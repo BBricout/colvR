@@ -4,7 +4,7 @@
 \alias{Miss.PLNPCA}
 \title{PLN-PCA with missing data (variational fit + imputation)}
 \usage{
-Miss.PLNPCA(Y, X, O = NULL, w = NULL, q, params = NULL, config = NULL)
+Miss.PLNPCA(Y, X, q, O = NULL, w = NULL, params = NULL, config = NULL)
 }
 \arguments{
 \item{Y}{Numeric \code{n x p} count matrix. May contain \code{NA}.}
@@ -13,12 +13,12 @@ Miss.PLNPCA(Y, X, O = NULL, w = NULL, q, params = NULL, config = NULL)
 either \code{n x d} (rowwise) or \code{(n*p) x d} (vectorized to match
 \code{MatrixToVector(Y)}).}
 
+\item{q}{Integer, latent rank (dimension of the latent space).}
+
 \item{O}{Optional numeric \code{n x p} matrix of offsets (default: zeros).}
 
 \item{w}{Optional numeric vector of length \code{n} with observation weights
 (default: all ones).}
-
-\item{q}{Integer, latent rank (dimension of the latent space).}
 
 \item{params}{Optional initial parameters (list) typically produced by
 \code{\link{Init}}; if \code{NULL}, they are initialized internally.}
