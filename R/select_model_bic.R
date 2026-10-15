@@ -28,13 +28,23 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' sel <- select_model_bic(Y, X, Miss.ZIPLNPCA, latents = 1:5)
-#' sel$q_star
-#' plot(1:5, sel$values, type = "b", xlab = "q", ylab = "BIC")
+#' set.seed(1)
+#' n <- 30; p <- 5; d <- 2; q <- 2
+#' X <- cbind(1, rnorm(n * p))                       # (n*p) x d design
+#' theta <- list(B = matrix(c(1, 0.5)), D = matrix(c(1, -0.5)),
+#'               C = matrix(rnorm(p * q, sd = 0.5), p, q))
+#' Y <- Simul(X, theta, list(n = n, p = p, d = d, q = q))$Y
+#' Y[sample(n * p, 20)] <- NA                        # missing entries
 #'
-#' sel_icl <- select_model_bic(Y, X, Miss.ZIPLNPCA, latents = 1:5, criterion = "ICL")
-#' fit <- sel_icl$fit_star
+#' \donttest{
+#' sel <- select_model_bic(Y, X, Miss.ZIPLNPCA, latents = 1:3)
+#' sel$values
+#' sel$q_star
+#' fit <- sel$fit_star
+#'
+#' sel_icl <- select_model_bic(Y, X, Miss.ZIPLNPCA, latents = 1:3,
+#'                             criterion = "ICL")
+#' sel_icl$q_star
 #' }
 #'
 #' @seealso \code{\link{BIC}}, \code{\link{ICL}}

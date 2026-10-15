@@ -69,17 +69,17 @@
 #' paramétrisation voulue est cohérente avec le backend.
 #'
 #' @examples
-#' \dontrun{
 #' set.seed(1)
-#' n <- 50; p <- 15; d <- 3; q <- 2
-#' Y <- matrix(rpois(n*p, 2), n, p); Y[sample(length(Y), 30)] <- NA
-#' X <- cbind(1, rnorm(n*p), rnorm(n*p))  # (n*p) x d, vectorized design
+#' n <- 30; p <- 5; d <- 2; q <- 2
+#' X <- cbind(1, rnorm(n * p))                       # (n*p) x d design
+#' theta <- list(B = matrix(c(1, 0.5)), D = matrix(c(1, -0.5)),
+#'               C = matrix(rnorm(p * q, sd = 0.5), p, q))
+#' Y <- Simul(X, theta, list(n = n, p = p, d = d, q = q))$Y
+#' Y[sample(n * p, 20)] <- NA                        # missing entries
 #'
 #' fit <- Miss.ZIPLNPCA_Steps(Y, X, q)
 #' fit$elbo
-#' plot(fit$elboPath, type = "l", xlab = "outer iter", ylab = "ELBO")
-#' str(fit$mStep); str(fit$eStep)
-#' }
+#' plot(fit$elboPath, type = "l", xlab = "Outer iteration", ylab = "ELBO")
 #'
 #' @seealso \code{\link{Miss.ZIPLNPCA}}, \code{\link{Miss.ZIPLNPCA.logS}},
 #'   \code{\link{Init_ZIP}}, \code{\link{Elbo_grad}}

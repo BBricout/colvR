@@ -73,24 +73,17 @@ the vectorization and parameter stacking used in the optimizer are
 consistent with the shapes listed above.
 }
 \examples{
-\dontrun{
 set.seed(1)
-n <- 40; p <- 12; d <- 3
-q <- 2
-Y <- matrix(rpois(n*p, 2), n, p)
-Y[sample(length(Y), 25)] <- NA
-# Vectorized design (n*p) x d:
-X <- cbind(1, rnorm(n*p), rnorm(n*p))
+n <- 30; p <- 5; d <- 2; q <- 2
+X <- cbind(1, rnorm(n * p))                       # (n*p) x d design
+theta <- list(B = matrix(c(1, 0.5)), D = matrix(c(1, -0.5)),
+              C = matrix(rnorm(p * q, sd = 0.5), p, q))
+Y <- Simul(X, theta, list(n = n, p = p, d = d, q = q))$Y
+Y[sample(n * p, 20)] <- NA                        # missing entries
 
-fit <- Miss.ZIPLNPCA(Y = Y, X = X, q = q)
+fit <- Miss.ZIPLNPCA(Y, X, q)
 str(fit$mStep)
-str(fit$eStep)
-image(log1p(fit$imputed))  # quick look at imputed counts
-
-# Rank-0 (ZIP regression without latent factors):
-fit0 <- Miss.ZIPLNPCA(Y = Y, X = X, q = 0)
-fit0$eStep$xi[1:3, 1:3]
-}
+fit$imputed[is.na(Y)][1:5]                        # imputed values
 
 }
 \seealso{

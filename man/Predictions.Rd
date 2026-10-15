@@ -83,15 +83,24 @@ variables drawn from their variational posterior, after one VE step per
 draw) and marginal (latent variables drawn from their prior).
 }
 \examples{
-\dontrun{
-pi_cond <- Predictions(Y, X, fit, MC = 100)
-pi_marg <- Predictions(Y, X, fit, MC = 100, type = "marginal",
-                       probs = c(0.05, 0.95))
+set.seed(1)
+n <- 30; p <- 5; d <- 2; q <- 2
+X <- cbind(1, rnorm(n * p))                       # (n*p) x d design
+theta <- list(B = matrix(c(1, 0.5)), D = matrix(c(1, -0.5)),
+              C = matrix(rnorm(p * q, sd = 0.5), p, q))
+Y <- Simul(X, theta, list(n = n, p = p, d = d, q = q))$Y
+Y[sample(n * p, 20)] <- NA                        # missing entries
+fit <- Miss.ZIPLNPCA(Y, X, q)
 
-# Parallel VE steps on a server
-cl <- parallel::makeCluster(8)
-res <- Predictions(Y, X, fit, MC = 1000, output = "all", cl = cl)
-parallel::stopCluster(cl)
+\donttest{
+# Conditional intervals (default), 90\% upper bound
+pi_cond <- Predictions(Y, X, fit, MC = 20)
+pi_cond$upper[1:3, ]
+
+# Marginal intervals at other levels, with the draws
+pi_marg <- Predictions(Y, X, fit, MC = 20, type = "marginal",
+                       probs = c(0.05, 0.95), output = "draws")
+dim(pi_marg$draws$count)
 }
 
 }

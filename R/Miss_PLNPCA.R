@@ -45,23 +45,15 @@
 #'
 #'
 #' @examples
-#' \dontrun{
 #' set.seed(1)
-#' n <- 40; p <- 12; d <- 2; q <- 2
-#' Y <- matrix(rpois(n*p, 2), n, p)
-#' Y[sample(length(Y), 20)] <- NA
-#' X <- cbind(1, rnorm(n))      # rowwise design
+#' n <- 30; p <- 5; q <- 2
+#' Y <- matrix(rpois(n * p, 2), n, p)
+#' Y[sample(n * p, 20)] <- NA                        # missing entries
+#' X <- cbind(1, rnorm(n))                           # rowwise design, n x d
 #'
-#' fit <- Miss.PLNPCA(
-#'   Y = Y, X = X, q = q,
-#'   O = matrix(0, n, p),
-#'   w = rep(1, n),
-#'   params = NULL,
-#'   config = NULL
-#' )
-#' str(fit$pred$A)     # expected counts (n x p)
-#' fit$elbo            # final ELBO
-#' }
+#' fit <- Miss.PLNPCA(Y = Y, X = X, q = q)
+#' fit$elbo
+#' str(fit$pred$A)
 #'
 #' @seealso \code{\link{Init}}, \code{\link[PLNmodels]{PLNPCA_param}}
 #'   \code{\link{MatrixToVector}}, \code{\link{VectorToMatrix}},
