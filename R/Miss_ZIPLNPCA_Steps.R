@@ -83,7 +83,6 @@
 #'
 #' @seealso \code{\link{Miss.ZIPLNPCA}}, \code{\link{Miss.ZIPLNPCA.logS}},
 #'   \code{\link{Init_ZIP}}, \code{\link{Elbo_grad}}
-#' @import PLNmodels
 #' @export
 
 

@@ -8,6 +8,7 @@
 #' @usage MatrixToVector(matrix)
 #' @seealso \code{\link{VectorToMatrix}}
 #' @keywords internal
+#' @export
 #' @name MatrixToVector
 NULL
 
@@ -23,5 +24,6 @@ NULL
 #' @usage VectorToMatrix(vector, n, p)
 #' @seealso \code{\link{MatrixToVector}}
 #' @keywords internal
+#' @export
 #' @name VectorToMatrix
 NULL

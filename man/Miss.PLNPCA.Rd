@@ -79,7 +79,7 @@ fit$elbo            # final ELBO
 
 }
 \seealso{
-\code{\link{Init}}, \code{\link{PLNPCA_param}},
+\code{\link{Init}}, \code{\link[PLNmodels]{PLNPCA_param}}
   \code{\link{MatrixToVector}}, \code{\link{VectorToMatrix}},
   \code{\link{Elbo_grad}}
 }

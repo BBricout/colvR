@@ -207,9 +207,6 @@ V_theta <- function(Y, X, fit, ginv_tol = 1e-12, verbose = TRUE) {
     
     if (verbose) message("solve() failed or is unstable -> using MASS::ginv().")
     
-    if (!requireNamespace("MASS", quietly = TRUE)) {
-      stop("solve() failed and package 'MASS' is not available for ginv().")
-    }
     
     Cinv <- MASS::ginv(Ctheta, tol = ginv_tol)
   }

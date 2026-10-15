@@ -78,7 +78,6 @@
 #'
 #' @seealso \code{\link{Init_ZIP}}, \code{\link{Init_ZIP_q0}},
 #'   \code{\link{Elbo_grad}}, \code{\link{VectorToMatrix}}
-#' @import PLNmodels
 #' @export
 
 

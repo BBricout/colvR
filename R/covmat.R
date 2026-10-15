@@ -37,11 +37,3 @@ covmat <- function(n, p, R = NULL, C = NULL, E = NULL, center = FALSE) {
   lori::covmat(n = n, p = p, R = R, C = C, E = E, center = center)
 }
 
-covmat <- function(n, p, R = NULL, C = NULL, E = NULL, center = FALSE) {
-  lori::covmat(n = n, p = p, R = R, C = C, E = E, center = center)
-}
-
-covmat <- function(n, p, R = NULL, C = NULL, E = NULL, center = FALSE) {
-  lori::covmat(n = n, p = p, R = R, C = C, E = E, center = center)
-}
-

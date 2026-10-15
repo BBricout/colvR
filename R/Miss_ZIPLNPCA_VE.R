@@ -68,7 +68,6 @@
 #'
 #' @seealso \code{\link{Miss.ZIPLNPCA}}, \code{\link{Miss.ZIPLNPCA_Steps}},
 #'   \code{\link{Init_ZIP}}
-#' @import PLNmodels
 #' @export
 
 

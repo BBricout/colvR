@@ -66,7 +66,7 @@
 #'
 #' @seealso \code{\link{Miss.ZIPLNPCA}} for the \code{S} parametrization,
 #'   \code{\link{Init_ZIP}}, \code{\link{Elbo_grad}}
-#' @import PLNmodels
+#' @importFrom PLNmodels PLNPCA_param
 #' @export
 
 
