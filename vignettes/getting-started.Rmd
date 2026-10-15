@@ -107,12 +107,12 @@ based on the Bayesian Information Criterion (BIC). The selected value correspond
 dimension that maximizes the BIC score.  
 
 We rely on a precomputed model selection (saved in the package) to keep the vignette fast.
-If you want to recompute it locally, set `Sys.setenv(NOT_CRAN = "true")` before knitting.
+If you want to recompute it locally, set `Sys.setenv(COLVR_RECOMPUTE = "true")` before knitting.
 
 ```{r}
 q_grid <- 1:p
 
-use_precomputed <- !identical(Sys.getenv("NOT_CRAN"), "true")
+use_precomputed <- !identical(Sys.getenv("COLVR_RECOMPUTE"), "true")
 
 if (use_precomputed) {
   sel <- readRDS(system.file("extdata", "sel_waterbird.rds", package = "colvR"))
