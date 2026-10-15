@@ -106,8 +106,8 @@ The function `select_model_bic()` can be used to compare models fitted with diff
 based on the Bayesian Information Criterion (BIC). The selected value corresponds to the latent space  
 dimension that maximizes the BIC score.  
 
-We rely on precomputed BIC values (saved in the package) to keep the vignette fast.
-If you want to recompute them locally, set `Sys.setenv(NOT_CRAN = "true")` before knitting.
+We rely on a precomputed model selection (saved in the package) to keep the vignette fast.
+If you want to recompute it locally, set `Sys.setenv(NOT_CRAN = "true")` before knitting.
 
 ```{r}
 q_grid <- 1:p
@@ -115,35 +115,34 @@ q_grid <- 1:p
 use_precomputed <- !identical(Sys.getenv("NOT_CRAN"), "true")
 
 if (use_precomputed) {
-  bics <- readRDS(system.file("extdata", "bics_fuligule.rds", package = "colvR"))
+  sel <- readRDS(system.file("extdata", "sel_waterbird.rds", package = "colvR"))
 } else {
-  bics <- select_model_bic(Y, X, Miss.ZIPLNPCA, q_grid)
-  # (Optionnel) sauvegarder à nouveau si vous voulez mettre à jour le package :
-  # saveRDS(bics, file = "inst/extdata/bics_fuligule.rds", compress = "xz")
+  sel <- select_model_bic(Y, X, Miss.ZIPLNPCA, q_grid)
 }
 
-# Selected q (robuste aux noms)
-q <- if (!is.null(names(bics))) as.integer(names(bics)[which.max(bics)]) else q_grid[which.max(bics)]
+q <- sel$q_star
 q
 ```
 
 ```{r bics_plot, fig.cap="Model selection via BIC", fig.alt="Line plot of BIC versus the latent dimension q for the waterbird data; the selected q maximizes BIC."}
-plot(q_grid, as.numeric(bics), type = "b",
+plot(q_grid, sel$values, type = "b",
      xlab = "Latent dimension q", ylab = "BIC")
-# (optionnel) surligner q*
-points(q, bics[which.max(bics)], pch = 19, cex = 1.2)
+points(q, max(sel$values), pch = 19, cex = 1.2)
 abline(v = q, lty = 2)
 ```
 
 
 ### Fit
 
-Once the latent dimension \(q\) has been chosen, we can fit the model using  
+Once the latent dimension \(q\) has been chosen, the model is fitted with  
 the function `Miss.ZIPLNPCA()`. This function estimates the model parameters  
 while simultaneously imputing the missing entries in the count matrix `Y`.  
+`select_model_bic()` already returns the model fitted with the selected \(q\),  
+so there is no need to fit it again: `sel$fit_star` is equivalent to  
+`Miss.ZIPLNPCA(Y, X, q)`.
 
 ```{r}
-fit <- Miss.ZIPLNPCA(Y, X, q)
+fit <- sel$fit_star
 ```
 
 The returned object is a list containing:  
