@@ -17,5 +17,6 @@ longer appears in the incoming queue. This version 0.2.0 replaces it.
 0 errors | 0 warnings | 1 note
 
 * New submission.
-* Possibly misspelled words in DESCRIPTION: "Bricout" (author name) and
-  "et al." (in the reference to the arXiv preprint) are spelled correctly.
+* Possibly misspelled words in DESCRIPTION: "Bricout" (author name), "et al."
+  (in the reference to the arXiv preprint), "ICL" (Integrated Completed
+  Likelihood) and "variational" are spelled correctly.
