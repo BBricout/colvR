@@ -8,12 +8,12 @@ Authors@R:
            role = c("aut", "cre"))
 Description: Impute missing data in count tables using a Poisson lognormal
     model with dimension reduction, with and without zero inflation, as
-    described in Bricout et al. (2026) <arXiv:2602.10673>. Parameters are
-    estimated with a variational expectation-maximization algorithm. The
-    package also provides the asymptotic variance of the estimators,
-    prediction intervals for the imputed counts, and model selection
-    criteria (BIC and ICL) to choose the dimension of the latent space.
-License: GPL-3 + file LICENSE
+    described in Bricout et al. (2026) <doi:10.48550/arXiv.2602.10673>.
+    Parameters are estimated with a variational expectation-maximization
+    algorithm. The package also provides the asymptotic variance of the
+    estimators, prediction intervals for the imputed counts, and model
+    selection criteria (BIC and ICL) to choose the dimension of the latent space.
+License: GPL (>= 3)
 Encoding: UTF-8
 Language: en-US
 Imports:
