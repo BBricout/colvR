@@ -133,5 +133,5 @@ fit <- Miss.ZIPLNPCA.logS(Y, X, q, tolLogS = 2)   # cap logS
 fit$elbo
 #> [1] -244.7575
 str(fit$eStep$S)
-#>  num [1:30, 1:2] 0.591 0.314 0.29 0.385 0.605 ...
+#>  num [1:30, 1:2] 0.591 0.314 0.29 0.385 0.606 ...
 ```
