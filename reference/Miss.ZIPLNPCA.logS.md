@@ -77,12 +77,13 @@ A list with components:
 
   List with predictors and expected counts: `mu` (`n x p`), `nu`
   (`n x p`), backend Poisson mean `A` (`n x p`), and `predicted`
-  recomputed in R: \$\$\exp\\\big( X B + M C^\top + 0.5\\(S\odot
-  S)\\(C\odot C)^\top \big).\$\$
+  (`n x p`, ZIP expectation for all entries: \\\xi \odot A\\, with \\A =
+  \exp( XB + M C^\top + 0.5\\ S\\ (C\odot C)^\top )\\, `S` being the
+  variational variances).
 
 - `imputed`:
 
-  `n x p` matrix equal to `xi * A` at missing entries of `Y`, and `Y`
+  `n x p` matrix equal to `predicted` at missing entries of `Y`, and `Y`
   elsewhere.
 
 - `iter`:
@@ -120,14 +121,17 @@ for the `S` parametrization,
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 set.seed(1)
-n <- 40; p <- 12; d <- 3; q <- 2
-Y <- matrix(rpois(n*p, 2), n, p); Y[sample(length(Y), 20)] <- NA
-X <- cbind(1, rnorm(n*p), rnorm(n*p))  # (n*p) x d
+n <- 30; p <- 5; d <- 2; q <- 2
+X <- cbind(1, rnorm(n * p))                       # (n*p) x d design
+theta <- list(B = matrix(c(1, 0.5)), D = matrix(c(1, -0.5)),
+              C = matrix(rnorm(p * q, sd = 0.5), p, q))
+Y <- Simul(X, theta, list(n = n, p = p, d = d, q = q))$Y
+Y[sample(n * p, 20)] <- NA                        # missing entries
 
-fit <- Miss.ZIPLNPCA.logS(Y = Y, X = X, q = q, tolLogS = 2)  # cap logS
+fit <- Miss.ZIPLNPCA.logS(Y, X, q, tolLogS = 2)   # cap logS
 fit$elbo
+#> [1] -244.7575
 str(fit$eStep$S)
-} # }
+#>  num [1:30, 1:2] 0.591 0.314 0.29 0.385 0.605 ...
 ```

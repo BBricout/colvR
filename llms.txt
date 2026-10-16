@@ -58,13 +58,15 @@ Fit, model selection, variance and confidence intervals.
 - [`Miss.ZIPLNPCA()`](https://bbricout.github.io/colvR/reference/Miss.ZIPLNPCA.md)
   : ZI‑PLN-PCA with missing data (variational fit + imputation)
 - [`select_model_bic()`](https://bbricout.github.io/colvR/reference/select_model_bic.md)
-  : Model selection by BIC over candidate latent dimensions
+  : Model selection over candidate latent dimensions (BIC or ICL)
 - [`V_theta()`](https://bbricout.github.io/colvR/reference/V_theta.md) :
   Variance-covariance matrix of theta
 - [`IC()`](https://bbricout.github.io/colvR/reference/IC.md) : 95%
   interval for a theta 95% confidence interval for theta
 - [`BIC()`](https://bbricout.github.io/colvR/reference/BIC.md) : BIC
-  from ELBO for a ZIP-PLN latent factor model
+  from the ELBO for PLN-PCA and ZIP-PLN-PCA models
+- [`ICL()`](https://bbricout.github.io/colvR/reference/ICL.md) : ICL
+  from the ELBO for PLN-PCA and ZIP-PLN-PCA models
 
 ## Initialisation
 
@@ -114,8 +116,8 @@ Simulation tools and helpers.
 
 Datasets bundled with colvR.
 
-- [`fuligule_milouin`](https://bbricout.github.io/colvR/reference/fuligule_milouin.md)
-  : Fuligule milouin example dataset
+- [`waterbird`](https://bbricout.github.io/colvR/reference/waterbird.md)
+  : Waterbird count data
 
 # Articles
 

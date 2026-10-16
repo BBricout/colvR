@@ -86,22 +86,20 @@ parsimoniously captures correlations between years within the same site.
 
 ### Data
 
-To illustrate the use of `colvR`, we rely on the dataset
-**`fuligule_milouin`** provided with the package.  
-This dataset contains winter count data of the **Common Pochard (*Aythya
-ferina*)**, a Palearctic diving duck species.  
-The counts were collected across multiple wetland sites in North Africa
-over several years, and the dataset is  
-characterized by a high proportion of zeros and a substantial amount of
-missing values — making it a suitable  
-case study for the zero-inflated Poisson log-normal framework
-implemented in `colvR`.
+To illustrate the use of `colvR`, we rely on the dataset **`waterbird`**
+provided with the package.  
+It contains counts of a waterbird species from a monitoring program
+covering several sites over several years. The data are incomplete: many
+site-year combinations were not surveyed. Together with a high
+proportion of zeros, this substantial amount of missing values makes the
+dataset a suitable case study for the zero-inflated Poisson log-normal
+framework implemented in `colvR`. Sites and years are anonymized.
 
 ``` r
 
 
-data("fuligule_milouin")
-Y <- fuligule_milouin$Y ; X <- fuligule_milouin$X
+data("waterbird")
+Y <- waterbird$Y ; X <- waterbird$X
 n <- nrow(Y) ; p <- ncol(Y) ; d <- ncol(X)
 
 cat(mean(is.na(Y)), "is the proportion of missing entries in Y.\n")
@@ -121,58 +119,58 @@ based on the Bayesian Information Criterion (BIC). The selected value
 corresponds to the latent space  
 dimension that maximizes the BIC score.
 
-We rely on precomputed BIC values (saved in the package) to keep the
-vignette fast. If you want to recompute them locally, set
-`Sys.setenv(NOT_CRAN = "true")` before knitting.
+We rely on a precomputed model selection (saved in the package) to keep
+the vignette fast. If you want to recompute it locally, set
+`Sys.setenv(COLVR_RECOMPUTE = "true")` before knitting.
 
 ``` r
 
 q_grid <- 1:p
 
-use_precomputed <- !identical(Sys.getenv("NOT_CRAN"), "true")
+use_precomputed <- !identical(Sys.getenv("COLVR_RECOMPUTE"), "true")
 
 if (use_precomputed) {
-  bics <- readRDS(system.file("extdata", "bics_fuligule.rds", package = "colvR"))
+  sel <- readRDS(system.file("extdata", "sel_waterbird.rds", package = "colvR"))
 } else {
-  bics <- select_model_bic(Y, X, Miss.ZIPLNPCA, q_grid)
-  # (Optionnel) sauvegarder à nouveau si vous voulez mettre à jour le package :
-  # saveRDS(bics, file = "inst/extdata/bics_fuligule.rds", compress = "xz")
+  sel <- select_model_bic(Y, X, Miss.ZIPLNPCA, q_grid)
 }
 
-# Selected q (robuste aux noms)
-q <- if (!is.null(names(bics))) as.integer(names(bics)[which.max(bics)]) else q_grid[which.max(bics)]
+q <- sel$q_star
 q
-#> [1] 12
+#> [1] 11
 ```
 
 ``` r
 
-plot(q_grid, as.numeric(bics), type = "b",
+plot(q_grid, sel$values, type = "b",
      xlab = "Latent dimension q", ylab = "BIC")
-# (optionnel) surligner q*
-points(q, bics[which.max(bics)], pch = 19, cex = 1.2)
+points(q, max(sel$values), pch = 19, cex = 1.2)
 abline(v = q, lty = 2)
 ```
 
-![Line plot of BIC versus the latent dimension q for the
-fuligule_milouin data; the selected q maximizes
+![Line plot of BIC versus the latent dimension q for the waterbird data;
+the selected q maximizes
 BIC.](getting-started_files/figure-html/bics_plot-1.png)
 
 Model selection via BIC
 
 ### Fit
 
-Once the latent dimension $`q`$ has been chosen, we can fit the model
-using  
+Once the latent dimension $`q`$ has been chosen, the model is fitted
+with  
 the function
 [`Miss.ZIPLNPCA()`](https://bbricout.github.io/colvR/reference/Miss.ZIPLNPCA.md).
 This function estimates the model parameters  
 while simultaneously imputing the missing entries in the count matrix
-`Y`.
+`Y`.  
+[`select_model_bic()`](https://bbricout.github.io/colvR/reference/select_model_bic.md)
+already returns the model fitted with the selected $`q`$,  
+so there is no need to fit it again: `sel$fit_star` is equivalent to  
+`Miss.ZIPLNPCA(Y, X, q)`.
 
 ``` r
 
-fit <- Miss.ZIPLNPCA(Y, X, q)
+fit <- sel$fit_star
 ```
 
 The returned object is a list containing:

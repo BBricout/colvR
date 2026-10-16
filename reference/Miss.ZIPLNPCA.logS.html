@@ -17,7 +17,7 @@ This guarantees positivity of \(S\) and allows simple box constraints on
 
     <a class="navbar-brand me-2" href="../index.html">colvR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -119,11 +119,13 @@ scales when needed.</p></dd>
   <dt><code>pred</code></dt>
 <dd><p>List with predictors and expected counts:
     <code>mu</code> (<code>n x p</code>), <code>nu</code> (<code>n x p</code>), backend Poisson mean
-    <code>A</code> (<code>n x p</code>), and <code>predicted</code> recomputed in R:
-    $$\exp\!\big( X B + M C^\top + 0.5\,(S\odot S)\,(C\odot C)^\top \big).$$</p></dd>
+    <code>A</code> (<code>n x p</code>), and
+    <code>predicted</code> (<code>n x p</code>, ZIP expectation for all entries:
+    \(\xi \odot A\), with \(A = \exp( XB + M C^\top + 0.5\, S\, (C\odot C)^\top )\),
+    <code>S</code> being the variational variances).</p></dd>
 
   <dt><code>imputed</code></dt>
-<dd><p><code>n x p</code> matrix equal to <code>xi * A</code> at missing
+<dd><p><code>n x p</code> matrix equal to <code>predicted</code> at missing
     entries of <code>Y</code>, and <code>Y</code> elsewhere.</p></dd>
 
   <dt><code>iter</code></dt>
@@ -158,16 +160,19 @@ Box constraints are set on <code>logS</code> via <code>config$upper_bounds</code
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">40</span>; <span class="va">p</span> <span class="op">&lt;-</span> <span class="fl">12</span>; <span class="va">d</span> <span class="op">&lt;-</span> <span class="fl">3</span>; <span class="va">q</span> <span class="op">&lt;-</span> <span class="fl">2</span></span></span>
-<span class="r-in"><span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="va">n</span><span class="op">*</span><span class="va">p</span>, <span class="fl">2</span><span class="op">)</span>, <span class="va">n</span>, <span class="va">p</span><span class="op">)</span>; <span class="va">Y</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span>, <span class="fl">20</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
-<span class="r-in"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">*</span><span class="va">p</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">*</span><span class="va">p</span><span class="op">)</span><span class="op">)</span>  <span class="co"># (n*p) x d</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">30</span>; <span class="va">p</span> <span class="op">&lt;-</span> <span class="fl">5</span>; <span class="va">d</span> <span class="op">&lt;-</span> <span class="fl">2</span>; <span class="va">q</span> <span class="op">&lt;-</span> <span class="fl">2</span></span></span>
+<span class="r-in"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span> <span class="op">*</span> <span class="va">p</span><span class="op">)</span><span class="op">)</span>                       <span class="co"># (n*p) x d design</span></span></span>
+<span class="r-in"><span><span class="va">theta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>B <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span>, D <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">0.5</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">p</span> <span class="op">*</span> <span class="va">q</span>, sd <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>, <span class="va">p</span>, <span class="va">q</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="Simul.html">Simul</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">theta</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="va">n</span>, p <span class="op">=</span> <span class="va">p</span>, d <span class="op">=</span> <span class="va">d</span>, q <span class="op">=</span> <span class="va">q</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">Y</span></span></span>
+<span class="r-in"><span><span class="va">Y</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">n</span> <span class="op">*</span> <span class="va">p</span>, <span class="fl">20</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>                        <span class="co"># missing entries</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">Miss.ZIPLNPCA.logS</span><span class="op">(</span>Y <span class="op">=</span> <span class="va">Y</span>, X <span class="op">=</span> <span class="va">X</span>, q <span class="op">=</span> <span class="va">q</span>, tolLogS <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>  <span class="co"># cap logS</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">Miss.ZIPLNPCA.logS</span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, <span class="va">q</span>, tolLogS <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>   <span class="co"># cap logS</span></span></span>
 <span class="r-in"><span><span class="va">fit</span><span class="op">$</span><span class="va">elbo</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -244.7575</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">eStep</span><span class="op">$</span><span class="va">S</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  num [1:30, 1:2] 0.591 0.314 0.29 0.385 0.605 ...</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

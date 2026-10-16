@@ -13,7 +13,7 @@ expected counts to impute missing entries."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">colvR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@ expected counts to impute missing entries.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">Miss.PLNPCA</span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, O <span class="op">=</span> <span class="cn">NULL</span>, w <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">q</span>, params <span class="op">=</span> <span class="cn">NULL</span>, config <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">Miss.PLNPCA</span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, <span class="va">q</span>, O <span class="op">=</span> <span class="cn">NULL</span>, w <span class="op">=</span> <span class="cn">NULL</span>, params <span class="op">=</span> <span class="cn">NULL</span>, config <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -66,6 +66,10 @@ either <code>n x d</code> (rowwise) or <code>(n*p) x d</code> (vectorized to mat
 <code>MatrixToVector(Y)</code>).</p></dd>
 
 
+<dt id="arg-q">q<a class="anchor" aria-label="anchor" href="#arg-q"></a></dt>
+<dd><p>Integer, latent rank (dimension of the latent space).</p></dd>
+
+
 <dt id="arg-o">O<a class="anchor" aria-label="anchor" href="#arg-o"></a></dt>
 <dd><p>Optional numeric <code>n x p</code> matrix of offsets (default: zeros).</p></dd>
 
@@ -73,10 +77,6 @@ either <code>n x d</code> (rowwise) or <code>(n*p) x d</code> (vectorized to mat
 <dt id="arg-w">w<a class="anchor" aria-label="anchor" href="#arg-w"></a></dt>
 <dd><p>Optional numeric vector of length <code>n</code> with observation weights
 (default: all ones).</p></dd>
-
-
-<dt id="arg-q">q<a class="anchor" aria-label="anchor" href="#arg-q"></a></dt>
-<dd><p>Integer, latent rank (dimension of the latent space).</p></dd>
 
 
 <dt id="arg-params">params<a class="anchor" aria-label="anchor" href="#arg-params"></a></dt>
@@ -130,30 +130,24 @@ either <code>n x d</code> (rowwise) or <code>(n*p) x d</code> (vectorized to mat
 </ol></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="Init.html">Init</a></code>, <code><a href="PLNPCA_param.html">PLNPCA_param</a></code>,
+    <div class="dont-index"><p><code><a href="Init.html">Init</a></code>, <code><a href="https://pln-team.github.io/PLNmodels/reference/PLNPCA_param.html" class="external-link">PLNPCA_param</a></code>
   <code><a href="MatrixToVector.html">MatrixToVector</a></code>, <code><a href="VectorToMatrix.html">VectorToMatrix</a></code>,
   <code><a href="Elbo_grad.html">Elbo_grad</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">40</span>; <span class="va">p</span> <span class="op">&lt;-</span> <span class="fl">12</span>; <span class="va">d</span> <span class="op">&lt;-</span> <span class="fl">2</span>; <span class="va">q</span> <span class="op">&lt;-</span> <span class="fl">2</span></span></span>
-<span class="r-in"><span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="va">n</span><span class="op">*</span><span class="va">p</span>, <span class="fl">2</span><span class="op">)</span>, <span class="va">n</span>, <span class="va">p</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">Y</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span>, <span class="fl">20</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
-<span class="r-in"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span>      <span class="co"># rowwise design</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">30</span>; <span class="va">p</span> <span class="op">&lt;-</span> <span class="fl">5</span>; <span class="va">q</span> <span class="op">&lt;-</span> <span class="fl">2</span></span></span>
+<span class="r-in"><span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="va">n</span> <span class="op">*</span> <span class="va">p</span>, <span class="fl">2</span><span class="op">)</span>, <span class="va">n</span>, <span class="va">p</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Y</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">n</span> <span class="op">*</span> <span class="va">p</span>, <span class="fl">20</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>                        <span class="co"># missing entries</span></span></span>
+<span class="r-in"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span>                           <span class="co"># rowwise design, n x d</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">Miss.PLNPCA</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  Y <span class="op">=</span> <span class="va">Y</span>, X <span class="op">=</span> <span class="va">X</span>, q <span class="op">=</span> <span class="va">q</span>,</span></span>
-<span class="r-in"><span>  O <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">n</span>, <span class="va">p</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">n</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  params <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>  config <span class="op">=</span> <span class="cn">NULL</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">pred</span><span class="op">$</span><span class="va">A</span><span class="op">)</span>     <span class="co"># expected counts (n x p)</span></span></span>
-<span class="r-in"><span><span class="va">fit</span><span class="op">$</span><span class="va">elbo</span>            <span class="co"># final ELBO</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">Miss.PLNPCA</span><span class="op">(</span>Y <span class="op">=</span> <span class="va">Y</span>, X <span class="op">=</span> <span class="va">X</span>, q <span class="op">=</span> <span class="va">q</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fit</span><span class="op">$</span><span class="va">elbo</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -71.26403</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">pred</span><span class="op">$</span><span class="va">A</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  num [1:30, 1:5] 2 2.01 1.57 2.69 2.54 ...</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -15,7 +15,7 @@ draw) and marginal (latent variables drawn from their prior)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">colvR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,8 @@ draw) and marginal (latent variables drawn from their prior).</p>
 <span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"conditional"</span>, <span class="st">"marginal"</span><span class="op">)</span>,</span>
 <span>  probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.9</span><span class="op">)</span>,</span>
 <span>  output <span class="op">=</span> <span class="st">"intervals"</span>,</span>
-<span>  cl <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  cl <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -120,6 +121,13 @@ A cluster from <code><a href="https://rdrr.io/r/parallel/makeCluster.html" class
 All random draws are made in the main process, so results for a given
 seed do not depend on <code>cl</code>.</p></dd>
 
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>Logical. If <code>TRUE</code> (default), prints the current step
+and shows progress bars for the VE steps and the simulation of the
+latent variables. Progress bars can also be controlled globally with
+<code><a href="https://peter.solymos.org/pbapply/reference/pboptions.html" class="external-link">pboptions</a></code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -144,16 +152,37 @@ seed do not depend on <code>cl</code>.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="va">pi_cond</span> <span class="op">&lt;-</span> <span class="fu">Predictions</span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, <span class="va">fit</span>, MC <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">pi_marg</span> <span class="op">&lt;-</span> <span class="fu">Predictions</span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, <span class="va">fit</span>, MC <span class="op">=</span> <span class="fl">100</span>, type <span class="op">=</span> <span class="st">"marginal"</span>,</span></span>
-<span class="r-in"><span>                       probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.95</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">30</span>; <span class="va">p</span> <span class="op">&lt;-</span> <span class="fl">5</span>; <span class="va">d</span> <span class="op">&lt;-</span> <span class="fl">2</span>; <span class="va">q</span> <span class="op">&lt;-</span> <span class="fl">2</span></span></span>
+<span class="r-in"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span> <span class="op">*</span> <span class="va">p</span><span class="op">)</span><span class="op">)</span>                       <span class="co"># (n*p) x d design</span></span></span>
+<span class="r-in"><span><span class="va">theta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>B <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span>, D <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">0.5</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              C <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">p</span> <span class="op">*</span> <span class="va">q</span>, sd <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>, <span class="va">p</span>, <span class="va">q</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="Simul.html">Simul</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">theta</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="va">n</span>, p <span class="op">=</span> <span class="va">p</span>, d <span class="op">=</span> <span class="va">d</span>, q <span class="op">=</span> <span class="va">q</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">Y</span></span></span>
+<span class="r-in"><span><span class="va">Y</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">n</span> <span class="op">*</span> <span class="va">p</span>, <span class="fl">20</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>                        <span class="co"># missing entries</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="Miss.ZIPLNPCA.html">Miss.ZIPLNPCA</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, <span class="va">q</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Parallel VE steps on a server</span></span></span>
-<span class="r-in"><span><span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">makeCluster</a></span><span class="op">(</span><span class="fl">8</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">Predictions</span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, <span class="va">fit</span>, MC <span class="op">=</span> <span class="fl">1000</span>, output <span class="op">=</span> <span class="st">"all"</span>, cl <span class="op">=</span> <span class="va">cl</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">stopCluster</a></span><span class="op">(</span><span class="va">cl</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># Conditional intervals (default), 90% upper bound</span></span></span>
+<span class="r-in"><span><span class="va">pi_cond</span> <span class="op">&lt;-</span> <span class="fu">Predictions</span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, <span class="va">fit</span>, MC <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing the sandwich variance...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Running 20 VE steps:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Simulating the latent variables:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Simulating the counts and computing the intervals...</span>
+<span class="r-in"><span><span class="va">pi_cond</span><span class="op">$</span><span class="va">upper</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       [,1] [,2] [,3] [,4] [,5]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 103.4  8.9 63.4  0.1  1.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]   6.7  7.1  7.3 34.6  4.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]   7.0  1.0  8.1  0.0  6.3</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Marginal intervals at other levels, with the draws</span></span></span>
+<span class="r-in"><span><span class="va">pi_marg</span> <span class="op">&lt;-</span> <span class="fu">Predictions</span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, <span class="va">fit</span>, MC <span class="op">=</span> <span class="fl">20</span>, type <span class="op">=</span> <span class="st">"marginal"</span>,</span></span>
+<span class="r-in"><span>                       probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.95</span><span class="op">)</span>, output <span class="op">=</span> <span class="st">"draws"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing the sandwich variance...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Simulating the latent variables:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Simulating the counts and computing the intervals...</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">pi_marg</span><span class="op">$</span><span class="va">draws</span><span class="op">$</span><span class="va">count</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 30  5 20</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

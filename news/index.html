@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">colvR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,18 +34,43 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.1.1" id="colvr-011">colvR 0.1.1<a class="anchor" aria-label="anchor" href="#colvr-011"></a></h2>
-</div>
-    <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.1.2" id="colvr-012">colvR 0.1.2<a class="anchor" aria-label="anchor" href="#colvr-012"></a></h2>
-</div>
-    <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.1.1" id="colvr-011-1">colvR 0.1.1<a class="anchor" aria-label="anchor" href="#colvr-011-1"></a></h2>
-</div>
-    <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.1.0" id="colvr-010">colvR 0.1.0<a class="anchor" aria-label="anchor" href="#colvr-010"></a></h2>
-<ul><li>Initial CRAN submission.</li>
+<h2 class="pkg-version" data-toc-text="0.2.0" id="colvr-020">colvR 0.2.0<a class="anchor" aria-label="anchor" href="#colvr-020"></a></h2>
+<div class="section level3">
+<h3 id="breaking-changes-0-2-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-2-0"></a></h3>
+<ul><li>
+<code>Predictions.marginales()</code> has been removed: use <code>Predictions(type = "marginal")</code>.</li>
+<li>
+<code><a href="../reference/select_model_bic.html">select_model_bic()</a></code> now returns a list with the criterion values, the selected latent dimension (<code>q_star</code>) and the corresponding fit (<code>fit_star</code>), instead of a vector of BIC values.</li>
+<li>In <code><a href="../reference/Miss.PLNPCA.html">Miss.PLNPCA()</a></code>, <code>q</code> is now the third argument, as in <code><a href="../reference/Miss.ZIPLNPCA.html">Miss.ZIPLNPCA()</a></code>.</li>
+<li>The example dataset <code>fuligule_milouin</code> has been replaced by <code>waterbird</code>, with anonymized sites and years and without the latitude covariate.</li>
 </ul></div>
+<div class="section level3">
+<h3 id="new-features-0-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h3>
+<ul><li>
+<code><a href="../reference/Predictions.html">Predictions()</a></code> gains the arguments <code>type</code> (conditional or marginal intervals), <code>probs</code> (quantile levels), <code>output</code> (draws, latent variables and parameter draws in addition to the intervals), <code>cl</code> (parallel VE steps) and <code>verbose</code>.</li>
+<li>New function <code><a href="../reference/ICL.html">ICL()</a></code>, the Integrated Completed Likelihood.</li>
+<li>
+<code><a href="../reference/select_model_bic.html">select_model_bic()</a></code> gains the arguments <code>criterion</code> (BIC or ICL) and <code>model</code>.</li>
+<li>
+<code><a href="../reference/BIC.html">BIC()</a></code> gains the argument <code>model</code> (<code>"ZIPLNPCA"</code> or <code>"PLNPCA"</code>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-0-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-0"></a></h3>
+<ul><li>
+<code><a href="../reference/BIC.html">BIC()</a></code> now counts <code>2d</code> regression parameters for the ZIP-PLN-PCA model, and <code>d</code> or <code>pd</code> for the PLN-PCA model, depending on the design.</li>
+<li>
+<code><a href="../reference/select_model_bic.html">select_model_bic()</a></code> now works with non-contiguous values of <code>latents</code>.</li>
+<li>In the <code>Miss.ZIPLNPCA*()</code> functions, <code>pred$predicted</code> is now the ZIP expectation <code>xi * A</code>, consistent with <code>imputed</code>.</li>
+<li>
+<code><a href="../reference/Predictions.html">Predictions()</a></code> no longer fails when <code>q = 1</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="other-changes-0-2-0">Other changes<a class="anchor" aria-label="anchor" href="#other-changes-0-2-0"></a></h3>
+<ul><li>All examples are now runnable, on small simulated data.</li>
+<li>New unit tests for the selection criteria, <code><a href="../reference/select_model_bic.html">select_model_bic()</a></code>, <code><a href="../reference/Predictions.html">Predictions()</a></code> and <code><a href="../reference/Miss.ZIPLNPCA.html">Miss.ZIPLNPCA()</a></code>.</li>
+<li>All messages are now in English.</li>
+</ul></div>
+</div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

@@ -17,7 +17,8 @@ Predictions(
   type = c("conditional", "marginal"),
   probs = c(0, 0.9),
   output = "intervals",
-  cl = NULL
+  cl = NULL,
+  verbose = TRUE
 )
 ```
 
@@ -78,6 +79,13 @@ Predictions(
   all platforms. All random draws are made in the main process, so
   results for a given seed do not depend on `cl`.
 
+- verbose:
+
+  Logical. If `TRUE` (default), prints the current step and shows
+  progress bars for the VE steps and the simulation of the latent
+  variables. Progress bars can also be controlled globally with
+  [`pboptions`](https://peter.solymos.org/pbapply/reference/pboptions.html).
+
 ## Value
 
 A list with elements:
@@ -106,14 +114,35 @@ A list with elements:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-pi_cond <- Predictions(Y, X, fit, MC = 100)
-pi_marg <- Predictions(Y, X, fit, MC = 100, type = "marginal",
-                       probs = c(0.05, 0.95))
+set.seed(1)
+n <- 30; p <- 5; d <- 2; q <- 2
+X <- cbind(1, rnorm(n * p))                       # (n*p) x d design
+theta <- list(B = matrix(c(1, 0.5)), D = matrix(c(1, -0.5)),
+              C = matrix(rnorm(p * q, sd = 0.5), p, q))
+Y <- Simul(X, theta, list(n = n, p = p, d = d, q = q))$Y
+Y[sample(n * p, 20)] <- NA                        # missing entries
+fit <- Miss.ZIPLNPCA(Y, X, q)
 
-# Parallel VE steps on a server
-cl <- parallel::makeCluster(8)
-res <- Predictions(Y, X, fit, MC = 1000, output = "all", cl = cl)
-parallel::stopCluster(cl)
-} # }
+# \donttest{
+# Conditional intervals (default), 90% upper bound
+pi_cond <- Predictions(Y, X, fit, MC = 20)
+#> Computing the sandwich variance...
+#> Running 20 VE steps:
+#> Simulating the latent variables:
+#> Simulating the counts and computing the intervals...
+pi_cond$upper[1:3, ]
+#>       [,1] [,2] [,3] [,4] [,5]
+#> [1,] 103.4  8.9 63.4  0.1  1.0
+#> [2,]   6.7  7.1  7.3 34.6  4.2
+#> [3,]   7.0  1.0  8.1  0.0  6.3
+
+# Marginal intervals at other levels, with the draws
+pi_marg <- Predictions(Y, X, fit, MC = 20, type = "marginal",
+                       probs = c(0.05, 0.95), output = "draws")
+#> Computing the sandwich variance...
+#> Simulating the latent variables:
+#> Simulating the counts and computing the intervals...
+dim(pi_marg$draws$count)
+#> [1] 30  5 20
+# }
 ```

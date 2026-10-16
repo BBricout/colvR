@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">colvR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -169,21 +169,18 @@ same site.</p>
 <h3 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
 </h3>
 <p>To illustrate the use of <code>colvR</code>, we rely on the dataset
-<strong><code>fuligule_milouin</code></strong> provided with the
-package.<br>
-This dataset contains winter count data of the <strong>Common Pochard
-(<em>Aythya ferina</em>)</strong>, a Palearctic diving duck
-species.<br>
-The counts were collected across multiple wetland sites in North Africa
-over several years, and the dataset is<br>
-characterized by a high proportion of zeros and a substantial amount of
-missing values — making it a suitable<br>
-case study for the zero-inflated Poisson log-normal framework
-implemented in <code>colvR</code>.</p>
+<strong><code>waterbird</code></strong> provided with the package.<br>
+It contains counts of a waterbird species from a monitoring program
+covering several sites over several years. The data are incomplete: many
+site-year combinations were not surveyed. Together with a high
+proportion of zeros, this substantial amount of missing values makes the
+dataset a suitable case study for the zero-inflated Poisson log-normal
+framework implemented in <code>colvR</code>. Sites and years are
+anonymized.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"fuligule_milouin"</span><span class="op">)</span></span>
-<span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">fuligule_milouin</span><span class="op">$</span><span class="va">Y</span> ; <span class="va">X</span> <span class="op">&lt;-</span> <span class="va">fuligule_milouin</span><span class="op">$</span><span class="va">X</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"waterbird"</span><span class="op">)</span></span>
+<span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">waterbird</span><span class="op">$</span><span class="va">Y</span> ; <span class="va">X</span> <span class="op">&lt;-</span> <span class="va">waterbird</span><span class="op">$</span><span class="va">X</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span> ; <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span> ; <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span><span class="op">)</span>, <span class="st">"is the proportion of missing entries in Y.\n"</span><span class="op">)</span></span>
@@ -204,34 +201,30 @@ models fitted with different values of
 based on the Bayesian Information Criterion (BIC). The selected value
 corresponds to the latent space<br>
 dimension that maximizes the BIC score.</p>
-<p>We rely on precomputed BIC values (saved in the package) to keep the
-vignette fast. If you want to recompute them locally, set
-<code>Sys.setenv(NOT_CRAN = "true")</code> before knitting.</p>
+<p>We rely on a precomputed model selection (saved in the package) to
+keep the vignette fast. If you want to recompute it locally, set
+<code>Sys.setenv(COLVR_RECOMPUTE = "true")</code> before knitting.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">q_grid</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="va">p</span></span>
 <span></span>
-<span><span class="va">use_precomputed</span> <span class="op">&lt;-</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"NOT_CRAN"</span><span class="op">)</span>, <span class="st">"true"</span><span class="op">)</span></span>
+<span><span class="va">use_precomputed</span> <span class="op">&lt;-</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"COLVR_RECOMPUTE"</span><span class="op">)</span>, <span class="st">"true"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">use_precomputed</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">bics</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"bics_fuligule.rds"</span>, package <span class="op">=</span> <span class="st">"colvR"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"sel_waterbird.rds"</span>, package <span class="op">=</span> <span class="st">"colvR"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="va">bics</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_model_bic.html">select_model_bic</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, <span class="va">Miss.ZIPLNPCA</span>, <span class="va">q_grid</span><span class="op">)</span></span>
-<span>  <span class="co"># (Optionnel) sauvegarder à nouveau si vous voulez mettre à jour le package :</span></span>
-<span>  <span class="co"># saveRDS(bics, file = "inst/extdata/bics_fuligule.rds", compress = "xz")</span></span>
+<span>  <span class="va">sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_model_bic.html">select_model_bic</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, <span class="va">Miss.ZIPLNPCA</span>, <span class="va">q_grid</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="co"># Selected q (robuste aux noms)</span></span>
-<span><span class="va">q</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">bics</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">bics</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">bics</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="kw">else</span> <span class="va">q_grid</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">bics</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">q</span> <span class="op">&lt;-</span> <span class="va">sel</span><span class="op">$</span><span class="va">q_star</span></span>
 <span><span class="va">q</span></span>
-<span><span class="co">#&gt; [1] 12</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 11</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">q_grid</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">bics</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"b"</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">q_grid</span>, <span class="va">sel</span><span class="op">$</span><span class="va">values</span>, type <span class="op">=</span> <span class="st">"b"</span>,</span>
 <span>     xlab <span class="op">=</span> <span class="st">"Latent dimension q"</span>, ylab <span class="op">=</span> <span class="st">"BIC"</span><span class="op">)</span></span>
-<span><span class="co"># (optionnel) surligner q*</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">q</span>, <span class="va">bics</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">bics</span><span class="op">)</span><span class="op">]</span>, pch <span class="op">=</span> <span class="fl">19</span>, cex <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">q</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">sel</span><span class="op">$</span><span class="va">values</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fl">19</span>, cex <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="va">q</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="getting-started_files/figure-html/bics_plot-1.png" class="r-plt" alt="Line plot of BIC versus the latent dimension q for the fuligule_milouin data; the selected q maximizes BIC." width="700"><p class="caption">
+<img src="getting-started_files/figure-html/bics_plot-1.png" class="r-plt" alt="Line plot of BIC versus the latent dimension q for the waterbird data; the selected q maximizes BIC." width="700"><p class="caption">
 Model selection via BIC
 </p>
 </div>
@@ -241,13 +234,17 @@ Model selection via BIC
 </h3>
 <p>Once the latent dimension
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
-has been chosen, we can fit the model using<br>
+has been chosen, the model is fitted with<br>
 the function <code><a href="../reference/Miss.ZIPLNPCA.html">Miss.ZIPLNPCA()</a></code>. This function estimates the
 model parameters<br>
 while simultaneously imputing the missing entries in the count matrix
-<code>Y</code>.</p>
+<code>Y</code>.<br><code><a href="../reference/select_model_bic.html">select_model_bic()</a></code> already returns the model fitted with
+the selected
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>,<br>
+so there is no need to fit it again: <code>sel$fit_star</code> is
+equivalent to<br><code>Miss.ZIPLNPCA(Y, X, q)</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Miss.ZIPLNPCA.html">Miss.ZIPLNPCA</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, <span class="va">q</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="va">sel</span><span class="op">$</span><span class="va">fit_star</span></span></code></pre></div>
 <p>The returned object is a list containing:</p>
 <ul>
 <li>the estimated <strong>parameters</strong> of the model

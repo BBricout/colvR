@@ -1,50 +1,48 @@
-# BIC from ELBO for a ZIP-PLN latent factor model
+# BIC from the ELBO for PLN-PCA and ZIP-PLN-PCA models
 
-Computes a Bayesian Information Criterion (BIC)-like score from the
-Evidence Lower Bound (ELBO) of a fitted model. The penalty accounts for
-the number of free parameters in a latent factor model with latent
-dimension `q`: \$\$ \mathrm{BIC} = \mathrm{ELBO} -
-\frac{\log(n)}{2}\Big\[q\\p - (q-1)/2\\ + p\\d\Big\], \$\$ where \\n\\
-is the number of rows (sites/samples), \\p\\ the number of columns
-(species/variables), and \\d\\ the number of covariates.
+Computes a BIC-like score in which the log-likelihood is replaced by the
+ELBO of the fitted model (higher is better): \$\$\mathrm{BIC} =
+\mathrm{ELBO} - \frac{\log(n)}{2}\Big\[q\\p - (q-1)/2\\ + k\Big\],\$\$
+where \\q\\p - (q-1)/2\\\\ is the number of free parameters in \\C\\
+(identifiable up to a rotation) and \\k\\ the number of regression
+parameters: \\2d\\ for the ZIP-PLN-PCA model (\\\beta\\ and \\\gamma\\),
+\\d\\ for the PLN-PCA model with a vectorized design (\\(np) \times d\\)
+and \\pd\\ with a rowwise design (\\n \times d\\). \\n\\ is the number
+of rows of `Y` (sites), which are the independent units of the model.
 
 ## Usage
 
 ``` r
-BIC(Y, X, fit, q)
+BIC(Y, X, fit, q, model = c("ZIPLNPCA", "PLNPCA"))
 ```
 
 ## Arguments
 
 - Y:
 
-  Numeric `n x p` count matrix.
+  Numeric `n x p` count matrix (NAs allowed).
 
 - X:
 
-  Numeric `n x d` design matrix of covariates (first column typically an
-  intercept).
+  Design matrix, `(n*p) x d` (or `n x d` for a rowwise PLN-PCA design).
 
 - fit:
 
-  A fitted object (list) containing at least `$elbo`, the maximized ELBO
-  value for the model.
+  Fitted object containing `$elbo` (output of `Miss.ZIPLNPCA` or
+  `Miss.PLNPCA`).
 
 - q:
 
-  Integer, size of the latent space (rank).
+  Integer, size of the latent space.
+
+- model:
+
+  `"ZIPLNPCA"` (default) or `"PLNPCA"`.
 
 ## Value
 
-A single numeric value: the BIC score (higher is better in this
-ELBO-based convention).
-
-## Details
-
-This criterion mirrors the usual BIC structure but replaces the
-log-likelihood with the ELBO and uses the parameter count appropriate
-for a rank-`q` latent factor structure.
+A single numeric value, the BIC score.
 
 ## See also
 
-[`BIC`](https://rdrr.io/r/stats/AIC.html)
+[`ICL`](https://bbricout.github.io/colvR/reference/ICL.md)

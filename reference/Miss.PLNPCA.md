@@ -8,7 +8,7 @@ returns expected counts to impute missing entries.
 ## Usage
 
 ``` r
-Miss.PLNPCA(Y, X, O = NULL, w = NULL, q, params = NULL, config = NULL)
+Miss.PLNPCA(Y, X, q, O = NULL, w = NULL, params = NULL, config = NULL)
 ```
 
 ## Arguments
@@ -22,6 +22,10 @@ Miss.PLNPCA(Y, X, O = NULL, w = NULL, q, params = NULL, config = NULL)
   Numeric design matrix of covariates: either `n x d` (rowwise) or
   `(n*p) x d` (vectorized to match `MatrixToVector(Y)`).
 
+- q:
+
+  Integer, latent rank (dimension of the latent space).
+
 - O:
 
   Optional numeric `n x p` matrix of offsets (default: zeros).
@@ -30,10 +34,6 @@ Miss.PLNPCA(Y, X, O = NULL, w = NULL, q, params = NULL, config = NULL)
 
   Optional numeric vector of length `n` with observation weights
   (default: all ones).
-
-- q:
-
-  Integer, latent rank (dimension of the latent space).
 
 - params:
 
@@ -98,7 +98,7 @@ Two designs for `X` are supported:
 ## See also
 
 [`Init`](https://bbricout.github.io/colvR/reference/Init.md),
-[`PLNPCA_param`](https://bbricout.github.io/colvR/reference/PLNPCA_param.md),
+[`PLNPCA_param`](https://pln-team.github.io/PLNmodels/reference/PLNPCA_param.html)
 [`MatrixToVector`](https://bbricout.github.io/colvR/reference/MatrixToVector.md),
 [`VectorToMatrix`](https://bbricout.github.io/colvR/reference/VectorToMatrix.md),
 [`Elbo_grad`](https://bbricout.github.io/colvR/reference/Elbo_grad.md)
@@ -106,21 +106,15 @@ Two designs for `X` are supported:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 set.seed(1)
-n <- 40; p <- 12; d <- 2; q <- 2
-Y <- matrix(rpois(n*p, 2), n, p)
-Y[sample(length(Y), 20)] <- NA
-X <- cbind(1, rnorm(n))      # rowwise design
+n <- 30; p <- 5; q <- 2
+Y <- matrix(rpois(n * p, 2), n, p)
+Y[sample(n * p, 20)] <- NA                        # missing entries
+X <- cbind(1, rnorm(n))                           # rowwise design, n x d
 
-fit <- Miss.PLNPCA(
-  Y = Y, X = X, q = q,
-  O = matrix(0, n, p),
-  w = rep(1, n),
-  params = NULL,
-  config = NULL
-)
-str(fit$pred$A)     # expected counts (n x p)
-fit$elbo            # final ELBO
-} # }
+fit <- Miss.PLNPCA(Y = Y, X = X, q = q)
+fit$elbo
+#> [1] -71.26403
+str(fit$pred$A)
+#>  num [1:30, 1:5] 2 2.01 1.57 2.69 2.54 ...
 ```

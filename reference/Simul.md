@@ -55,12 +55,20 @@ being available in the package.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-n <- 5; p <- 4; d <- 3; q <- 2
-X <- matrix(rnorm(n*p*d), n*p, d)
-theta <- list(B = matrix(rnorm(d)), D = matrix(rnorm(d)), C = matrix(rnorm(p*q), p, q))
-dim  <- list(n = n, p = p, d = d, q = q)
-out <- Simul(X, theta, dim)
-str(out)
-} # }
+set.seed(1)
+n <- 30; p <- 5; d <- 2; q <- 2
+X <- cbind(1, rnorm(n * p))                       # (n*p) x d design
+theta <- list(B = matrix(c(1, 0.5)), D = matrix(c(1, -0.5)),
+              C = matrix(rnorm(p * q, sd = 0.5), p, q))
+sim <- Simul(X, theta, list(n = n, p = p, d = d, q = q))
+str(sim)
+#> List of 6
+#>  $ Y     : int [1:30, 1:5] 2 3 4 0 0 0 0 0 0 0 ...
+#>  $ W     : num [1:30, 1:2] -0.09818 0.56082 -1.18646 1.09678 -0.00534 ...
+#>  $ U     : int [1:30, 1:5] 1 1 1 0 0 0 0 0 1 0 ...
+#>  $ Z     : int [1:30, 1:5] 2 3 4 10 7 3 3 6 0 2 ...
+#>  $ Lambda: num [1:30, 1:5] 1.68 4.24 2.6 9.23 5.31 ...
+#>  $ mu    : num [1:30, 1:5] 0.687 1.092 0.582 1.798 1.165 ...
+mean(sim$Y == 0)                                  # proportion of zeros
+#> [1] 0.3733333
 ```

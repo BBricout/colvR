@@ -69,14 +69,13 @@ A list with components:
 
   List with predictors and expected counts: `mu` (`n x p`, abundance
   mean), `nu` (`n x p`, zero‑inflation mean), `A` (`n x p`, PLN
-  expectation), `predicted` (`n x p`, predicted values). For `q = 0`,
-  `predicted = exp(XB)`; for `q > 0`, \$\$ \mathrm{predicted} =
-  \exp\\\big( XB + M C^\top + 0.5\\(S\odot S)\\(C\odot C)^\top \big).
-  \$\$
+  expectation), `predicted` (`n x p`, ZIP expectation for all entries:
+  \\\xi \odot A\\, with \\A = \exp( XB + M C^\top + 0.5\\ S\\ (C\odot
+  C)^\top )\\, `S` being the variational variances).
 
 - `imputed`:
 
-  `n x p` matrix equal to `xi * A` at missing entries of `Y`, and `Y`
+  `n x p` matrix equal to `predicted` at missing entries of `Y`, and `Y`
   elsewhere (ZIP expectation).
 
 - `iter`:
@@ -127,22 +126,20 @@ consistent with the shapes listed above.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 set.seed(1)
-n <- 40; p <- 12; d <- 3
-q <- 2
-Y <- matrix(rpois(n*p, 2), n, p)
-Y[sample(length(Y), 25)] <- NA
-# Vectorized design (n*p) x d:
-X <- cbind(1, rnorm(n*p), rnorm(n*p))
+n <- 30; p <- 5; d <- 2; q <- 2
+X <- cbind(1, rnorm(n * p))                       # (n*p) x d design
+theta <- list(B = matrix(c(1, 0.5)), D = matrix(c(1, -0.5)),
+              C = matrix(rnorm(p * q, sd = 0.5), p, q))
+Y <- Simul(X, theta, list(n = n, p = p, d = d, q = q))$Y
+Y[sample(n * p, 20)] <- NA                        # missing entries
 
-fit <- Miss.ZIPLNPCA(Y = Y, X = X, q = q)
+fit <- Miss.ZIPLNPCA(Y, X, q)
 str(fit$mStep)
-str(fit$eStep)
-image(log1p(fit$imputed))  # quick look at imputed counts
-
-# Rank-0 (ZIP regression without latent factors):
-fit0 <- Miss.ZIPLNPCA(Y = Y, X = X, q = 0)
-fit0$eStep$xi[1:3, 1:3]
-} # }
+#> List of 3
+#>  $ gamma: num [1:2, 1] 0.84 -0.615
+#>  $ beta : num [1:2, 1] 0.87 0.557
+#>  $ C    : num [1:5, 1:2] 0.4939 -0.2381 0.0296 0.1108 -1.037 ...
+fit$imputed[is.na(Y)][1:5]                        # imputed values
+#> [1] 3.069936 2.878609 2.428064 1.297661 2.505136
 ```
