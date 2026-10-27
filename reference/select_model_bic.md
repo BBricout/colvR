@@ -87,7 +87,7 @@ Y[sample(n * p, 20)] <- NA                        # missing entries
 sel <- select_model_bic(Y, X, Miss.ZIPLNPCA, latents = 1:3)
 sel$values
 #>         1         2         3 
-#> -265.5807 -267.4258 -272.9657 
+#> -265.5805 -267.4293 -272.9659 
 sel$q_star
 #> [1] 1
 fit <- sel$fit_star
