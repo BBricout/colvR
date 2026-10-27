@@ -133,9 +133,6 @@ Miss.ZIPLNPCA_Steps <- function(Y, X, q, params = NULL, config_vem = NULL, confi
          iter < config_vem$maxiter) {
     
     iter <- iter + 1
-    cat("Iteration:", iter, "ELBO:", elbo_new, "Diff params:", 
-        max(abs(params_new - params_old)), "Diff ELBO:", 
-        abs(elbo_new - elbo_old), "\n")
     
     params_old <- params_new
     elbo_old <- elbo_new
@@ -153,10 +150,6 @@ Miss.ZIPLNPCA_Steps <- function(Y, X, q, params = NULL, config_vem = NULL, confi
       params$S <- out_opt$S
       
       grad <- Elbo_grad(data, params, config_vem$tolxi)
-      cat(sprintf("gradB : %.4e gradD : %.4e gradC : %.4e gradM : %.4e gradS : %.4e\n",
-                  mean(grad$gradB^2), mean(grad$gradD^2),
-                  mean(grad$gradC^2), mean(grad$gradM^2),
-                  mean(grad$gradS^2)))
     }
     
     params_new <- unlist(params)

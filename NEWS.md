@@ -1,5 +1,4 @@
 # colvR 0.2.0
-
 ## Breaking changes
 
 * `Predictions.marginales()` has been removed: use `Predictions(type = "marginal")`.
@@ -34,3 +33,8 @@
 * New unit tests for the selection criteria, `select_model_bic()`, `Predictions()`
   and `Miss.ZIPLNPCA()`.
 * All messages are now in English.
+
+# colvR 0.2.1
+## Changes
+* Explanation of acronyms
+* Removal of console output from Miss.ZIPLNPCA_Steps()

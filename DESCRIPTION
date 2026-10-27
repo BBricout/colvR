@@ -1,7 +1,7 @@
 Package: colvR
 Type: Package
 Title: Poisson Lognormal with Dimension Reduction for Count Matrices with Missing Data
-Version: 0.2.0
+Version: 0.2.1
 Authors@R:
     person("Barbara", "Bricout",
            email = "barbara.bricout@gmail.com",
@@ -12,7 +12,9 @@ Description: Impute missing data in count tables using a Poisson lognormal
     Parameters are estimated with a variational expectation-maximization
     algorithm. The package also provides the asymptotic variance of the
     estimators, prediction intervals for the imputed counts, and model
-    selection criteria (BIC and ICL) to choose the dimension of the latent space.
+    selection criteria (Bayesian information criterion, BIC, and
+    integrated completed likelihood, ICL) to choose the dimension 
+    of the latent space.
 License: GPL (>= 3)
 Encoding: UTF-8
 Language: en-US
