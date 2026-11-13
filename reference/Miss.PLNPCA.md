@@ -114,7 +114,7 @@ X <- cbind(1, rnorm(n))                           # rowwise design, n x d
 
 fit <- Miss.PLNPCA(Y = Y, X = X, q = q)
 fit$elbo
-#> [1] -71.26403
+#> [1] -71.2638
 str(fit$pred$A)
 #>  num [1:30, 1:5] 2 2.01 1.57 2.69 2.54 ...
 ```

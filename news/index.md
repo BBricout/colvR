@@ -1,5 +1,21 @@
 # Changelog
 
+## colvR 0.2.2
+
+### Changes
+
+- Removed internal test function cpp_test_packing() which triggered a
+  -Wmismatched-new-delete warning with GCC 16.
+
+## colvR 0.2.1
+
+CRAN release: 2026-11-12
+
+### Changes
+
+- Explanation of acronyms
+- Removal of console output from Miss.ZIPLNPCA_Steps()
+
 ## colvR 0.2.0
 
 ### Breaking changes
@@ -54,10 +70,3 @@
   and
   [`Miss.ZIPLNPCA()`](https://bbricout.github.io/colvR/reference/Miss.ZIPLNPCA.md).
 - All messages are now in English.
-
-## colvR 0.2.1
-
-### Changes
-
-- Explanation of acronyms
-- Removal of console output from Miss.ZIPLNPCA_Steps()

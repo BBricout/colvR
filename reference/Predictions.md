@@ -131,10 +131,10 @@ pi_cond <- Predictions(Y, X, fit, MC = 20)
 #> Simulating the latent variables:
 #> Simulating the counts and computing the intervals...
 pi_cond$upper[1:3, ]
-#>       [,1] [,2] [,3] [,4] [,5]
-#> [1,] 103.4  8.9 63.4  0.1  1.0
-#> [2,]   6.7  7.1  7.3 34.6  4.2
-#> [3,]   7.0  1.0  8.1  0.0  6.3
+#>      [,1] [,2] [,3] [,4] [,5]
+#> [1,] 48.0  7.7 76.8  1.0  1.1
+#> [2,]  7.0  7.0  8.0 25.2  5.0
+#> [3,]  5.3  0.0 11.0  0.0  5.3
 
 # Marginal intervals at other levels, with the draws
 pi_marg <- Predictions(Y, X, fit, MC = 20, type = "marginal",
