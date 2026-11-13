@@ -184,16 +184,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// cpp_test_packing
-bool cpp_test_packing();
-RcppExport SEXP _colvR_cpp_test_packing() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(cpp_test_packing());
-    return rcpp_result_gen;
-END_RCPP
-}
 // MatrixToVector
 Rcpp::NumericVector MatrixToVector(const arma::mat& matrix);
 RcppExport SEXP _colvR_MatrixToVector(SEXP matrixSEXP) {
@@ -233,7 +223,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_colvR_nlopt_optimize_rank_cov", (DL_FUNC) &_colvR_nlopt_optimize_rank_cov, 3},
     {"_colvR_Elbo_grad_logS_Rcpp", (DL_FUNC) &_colvR_Elbo_grad_logS_Rcpp, 3},
     {"_colvR_nlopt_optimize_ZIP_logS", (DL_FUNC) &_colvR_nlopt_optimize_ZIP_logS, 4},
-    {"_colvR_cpp_test_packing", (DL_FUNC) &_colvR_cpp_test_packing, 0},
     {"_colvR_MatrixToVector", (DL_FUNC) &_colvR_MatrixToVector, 1},
     {"_colvR_VectorToMatrix", (DL_FUNC) &_colvR_VectorToMatrix, 3},
     {NULL, NULL, 0}

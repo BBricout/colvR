@@ -1,22 +1,23 @@
 ## Submission context
 
-This is a new submission. Version 0.1.1 was submitted on 2025-12-18, but we
-received no response (including to a follow-up email on 2026-02-04), and it no
-longer appears in the incoming queue. This version 0.2.0 replaces it.
+This is an update of a package already on CRAN (0.2.1). It fixes the
+installation WARNING reported on r-devel-linux-x86_64-fedora-gcc (GCC 16):
+
+  armadillo_bits/memory.hpp:125:14: warning: 'void free(void*)' called on
+  pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+
+The warning was triggered by an internal test function (`cpp_test_packing()`),
+which has been removed. Installation was verified to be warning-free with
+g++ 16.2.1 20261029 (Red Hat 16.2.1-3) on Fedora 44.
 
 ## Test environments
 
 * local: Ubuntu 22.04, R 4.6.1
+* Fedora 44, g++ 16.2.1, R 4.6.2 (installation only)
 * win-builder: Windows Server 2022, R-devel
-* macOS builder: macOS 26.6 (arm64), R 4.6.1
 * GitHub Actions: Ubuntu (R release, devel and oldrel-1), macOS (R release),
   Windows (R release)
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
-
-* New submission.
-* Possibly misspelled words in DESCRIPTION: "Bricout" (author name), "et al."
-  (in the reference to the arXiv preprint), "ICL" (Integrated Completed
-  Likelihood) and "variational" are spelled correctly.
+0 errors | 0 warnings | 0 notes

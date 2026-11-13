@@ -53,16 +53,10 @@ nlopt_optimize_ZIP_logS <- function(data, params, config, tolxi) {
     .Call(`_colvR_nlopt_optimize_ZIP_logS`, data, params, config, tolxi)
 }
 
-cpp_test_packing <- function() {
-    .Call(`_colvR_cpp_test_packing`)
-}
-
-#' @export
 MatrixToVector <- function(matrix) {
     .Call(`_colvR_MatrixToVector`, matrix)
 }
 
-#' @export
 VectorToMatrix <- function(vector, n, p) {
     .Call(`_colvR_VectorToMatrix`, vector, n, p)
 }
