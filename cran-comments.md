@@ -10,6 +10,10 @@ The warning was triggered by an internal test function (`cpp_test_packing()`),
 which has been removed. Installation was verified to be warning-free with
 g++ 16.2.1 20261029 (Red Hat 16.2.1-3) on Fedora 44.
 
+This update comes only shortly after 0.2.1 because it fixes the installation
+WARNING on r-devel-linux-x86_64-fedora-gcc that CRAN asked us to correct
+before 2026-12-04.
+
 ## Test environments
 
 * local: Ubuntu 22.04, R 4.6.1

@@ -1,4 +1,4 @@
-## colvR 0.2.2
+# colvR 0.2.2
 ## Changes
 * Removed internal test function cpp_test_packing() which triggered a -Wmismatched-new-delete warning with GCC 16.
 
